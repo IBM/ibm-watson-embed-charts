@@ -1,0 +1,182 @@
+# By setting license to true you indicate that you have read and agree to the
+# license agreements:
+# https://www14.software.ibm.com/cgi-bin/weblap/lap.pl?li_formnum=L-DAJI-CHRHDK
+license: false
+
+containerRegistry: "cp.icr.io/cp/ai"
+serviceType: ClusterIP
+imagePullSecrets:
+  - name: ibm-entitlement-key
+
+nameOverride: ""
+fullnameOverride: ""
+
+images:
+  runtime:
+    repository: watson-tts-runtime
+    digest: sha256:ed0fe12195ab85056abf3bdbea98ea8feedfa371af63770906359e852bd85f47
+    tag: 1.0.0
+  haproxy:
+    repository: watson-tts-haproxy
+    digest: sha256:c71936b76e5385229916598e11a8cbece56b1354123b374e19e29512356b958f
+    tag: 1.0.0
+  catalog:
+    repository: watson-tts-generic-models
+    digest: sha256:86d6718f69093f76be861bfabdd95e8fe4b1aed39c23017346af8c66d1adf3b6
+    tag: 1.0.0
+
+# Configures the resources
+resources:
+  runtime:
+    requests:
+      cpu: 1
+      memory: 4Gi
+      ephemeral-storage: 4Gi
+    limits:
+      cpu: 4
+      memory: 4Gi
+      ephemeral-storage: 4Gi
+  haproxy:
+    requests:
+      cpu: 0.2
+      memory: 1Gi
+      ephemeral-storage: 64Mi
+    limits:
+      cpu: 1
+      memory: 1Gi
+      ephemeral-storage: 64Mi
+
+defaultModel: en-US_AllisonV3Voice
+models:
+  deDEBirgitV3Voice:
+    catalogName: de-DE_BirgitV3Voice
+    repository: watson-tts-de-de-birgitv3voice
+    digest: sha256:28dbde73c51f7fc0c409574d488df7454a6ea0581fed94612cffe8937ab2f16f
+    tag: 1.0.0
+    enabled: false
+  deDEDieterV3Voice:
+    catalogName: de-DE_DieterV3Voice
+    repository: watson-tts-de-de-dieterv3voice
+    digest: sha256:e1ab34be2ef38472f8740bbdf5cf0138ed8f3e967216fb65fb519d5dddd5da07
+    tag: 1.0.0
+    enabled: false
+  deDEErikaV3Voice:
+    catalogName: de-DE_ErikaV3Voice
+    repository: watson-tts-de-de-erikav3voice
+    digest: sha256:8cab2c54ade8c5f8d655465dfe40e2447550e83956ca6d7d0baa29ed17e979dd
+    tag: 1.0.0
+    enabled: false
+  enGBCharlotteV3Voice:
+    catalogName: en-GB_CharlotteV3Voice
+    repository: watson-tts-en-gb-charlottev3voice
+    digest: sha256:72f0065c388c707148695f339718c92e5d1b8c4f29afad407268071d4f3190ed
+    tag: 1.0.0
+    enabled: false
+  enGBJamesV3Voice:
+    catalogName: en-GB_JamesV3Voice
+    repository: watson-tts-en-gb-jamesv3voice
+    digest: sha256:fd084e50305dcd6db4ba01374e12b6503f94db28f36a114e2d00786a1c20b9a0
+    tag: 1.0.0
+    enabled: false
+  enGBKateV3Voice:
+    catalogName: en-GB_KateV3Voice
+    repository: watson-tts-en-gb-katev3voice
+    digest: sha256:19eefe60cd5d1cebc37bbe8d86b2f6b8a4ddf45aa2635b7ef793540de9aa308a
+    tag: 1.0.0
+    enabled: false
+  enUSAllisonV3Voice:
+    catalogName: en-US_AllisonV3Voice
+    repository: watson-tts-en-us-allisonv3voice
+    digest: sha256:ec239ae990a7da2b6f9637a6147656aeae57fdf29dde70dde51d531a7d391a0f
+    tag: 1.0.0
+    enabled: true
+  enUSEmilyV3Voice:
+    catalogName: en-US_EmilyV3Voice
+    repository: watson-tts-en-us-emilyv3voice
+    digest: sha256:3595ecc0561f0228d4141edfdd62febdee8a68a7b62b4dad5d055da7f59f95d2
+    tag: 1.0.0
+    enabled: false
+  enUSKevinV3Voice:
+    catalogName: en-US_KevinV3Voice
+    repository: watson-tts-en-us-kevinv3voice
+    digest: sha256:c7b93117fd3716a6b73becb0fa80d2920d6aa440b2be4ff9f36efad16b3f6204
+    tag: 1.0.0
+    enabled: false
+  enUSLisaV3Voice:
+    catalogName: en-US_LisaV3Voice
+    repository: watson-tts-en-us-lisav3voice
+    digest: sha256:ba615a039de4cd0c6e13c5ff856992daa511e2f72352af0f1889ff89b53c0d14
+    tag: 1.0.0
+    enabled: false
+  enUSMichaelV3Voice:
+    catalogName: en-US_MichaelV3Voice
+    repository: watson-tts-en-us-michaelv3voice
+    digest: sha256:8f1494f4da27e1f096483b957744caa18b571e85c8c8eb278be7e244e7c0c53a
+    tag: 1.0.0
+    enabled: true
+  enUSOliviaV3Voice:
+    catalogName: en-US_OliviaV3Voice
+    repository: watson-tts-en-us-oliviav3voice
+    digest: sha256:49dcfc9c3206cc1d58551b57f96edbfed94307e16e5a7379b7b781c08387c965
+    tag: 1.0.0
+    enabled: false
+  esESEnriqueV3Voice:
+    catalogName: es-ES_EnriqueV3Voice
+    repository: watson-tts-es-es-enriquev3voice
+    digest: sha256:785286b8fa6b029edc4778c579954454d551e3481ae7644136ab211e1d8dfccd
+    tag: 1.0.0
+    enabled: false
+  esESLauraV3Voice:
+    catalogName: es-ES_LauraV3Voice
+    repository: watson-tts-es-es-laurav3voice
+    digest: sha256:72487cc6e23ce441d531a1646e77afba904da54dca57a933ffb366e799c3af12
+    tag: 1.0.0
+    enabled: false
+  esLASofiaV3Voice:
+    catalogName: es-LA_SofiaV3Voice
+    repository: watson-tts-es-la-sofiav3voice
+    digest: sha256:9a3050476d888335fd81c8ec591fe2e3141227719c0e1b5fd30eec2afec1ee7f
+    tag: 1.0.0
+    enabled: false
+  esUSSofiaV3Voice:
+    catalogName: es-US_SofiaV3Voice
+    repository: watson-tts-es-us-sofiav3voice
+    digest: sha256:31316a6396cc2126176e7bcf09bda8515f1dbf003ce81058e8454a2e85e66afe
+    tag: 1.0.0
+    enabled: false
+  frCALouiseV3Voice:
+    catalogName: fr-CA_LouiseV3Voice
+    repository: watson-tts-fr-ca-louisev3voice
+    digest: sha256:e2c50f6a632de6c4db26edd6a9b8f841bae6bc4296b2a54f3b86ef59cfb10ecb
+    tag: 1.0.0
+    enabled: false
+  frFRNicolasV3Voice:
+    catalogName: fr-FR_NicolasV3Voice
+    repository: watson-tts-fr-fr-nicolasv3voice
+    digest: sha256:84b019ac979364f4ebb0a1f5a88dffc91acc14dd07545aab17013e9c21062dbf
+    tag: 1.0.0
+    enabled: false
+  frFRReneeV3Voice:
+    catalogName: fr-FR_ReneeV3Voice
+    repository: watson-tts-fr-fr-reneev3voice
+    digest: sha256:b4aa393c0638eceedab6af784b9d8a295700895d95b613b02c04297f4d039d53
+    tag: 1.0.0
+    enabled: false
+  itITFrancescaV3Voice:
+    catalogName: it-IT_FrancescaV3Voice
+    repository: watson-tts-it-it-francescav3voice
+    digest: sha256:a4f20cee15c1d6cff1e5f06f6038d5f0a37bbad3fd5277149ca4e3b7630c667d
+    tag: 1.0.0
+    enabled: false
+  jaJPEmiV3Voice:
+    catalogName: ja-JP_EmiV3Voice
+    repository: watson-tts-ja-jp-emiv3voice
+    digest: sha256:b8b320a47db94b80e800ce39aea8f5a041c1a7861144b706875b08f5a47e2b0e
+    tag: 1.0.0
+    enabled: false
+  ptBRIsabelaV3Voice:
+    catalogName: pt-BR_IsabelaV3Voice
+    repository: watson-tts-pt-br-isabelav3voice
+    digest: sha256:5e73c30d6f29c42f80bdac09c3dfcbeac88a629bc11f2a04b12137afafafbecd
+    tag: 1.0.0
+    enabled: false

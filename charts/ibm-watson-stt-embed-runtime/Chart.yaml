@@ -1,0 +1,19 @@
+apiVersion: v2
+name: ibm-watson-stt-embed-runtime
+description: |
+  Demonstrates how to configure a deployment of the Watson Speech to Text
+  Library for Embed Runtime server.
+
+  License
+
+  By installing the containers you accept the license terms at:
+  https://www14.software.ibm.com/cgi-bin/weblap/lap.pl?li_formnum=L-DAJI-CHRHDK
+home: https://www.ibm.com/docs/watson-libraries?topic=watson-speech-text-library-embed-home
+
+type: application
+version: "0.1.0"
+appVersion: "1.0.0"
+
+dependencies:
+  - name: ibm-embed-helpers
+    version: "0.0.0"
