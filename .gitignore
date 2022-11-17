@@ -1,0 +1,17 @@
+# OS generated files
+.DS_Store
+.DS_Store?
+
+
+# editor and IDE paraphernalia
+.idea
+*.swp
+*.swo
+.vscode
+
+.bash_history
+.env
+.history
+
+# Development build cache
+.cache/
