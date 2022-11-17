@@ -1,0 +1,7 @@
+apiVersion: v2
+name: ibm-embed-helpers
+description: A library chart with shared helpers for the IBM Watson Embed products
+
+type: library
+version: "0.0.0"
+appVersion: "0.0.0"

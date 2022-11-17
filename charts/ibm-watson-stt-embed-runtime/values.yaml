@@ -1,0 +1,176 @@
+# By setting license to true you indicate that you have read and agree to the
+# license agreements:
+# https://www14.software.ibm.com/cgi-bin/weblap/lap.pl?li_formnum=L-DAJI-CHRHDK
+license: false
+
+containerRegistry: "cp.icr.io/cp/ai"
+serviceType: ClusterIP
+imagePullSecrets:
+  - name: ibm-entitlement-key
+
+nameOverride: ""
+fullnameOverride: ""
+
+images:
+  runtime:
+    repository: watson-stt-runtime
+    digest: sha256:00a8bb35458333431b2740f81c5581eae76b693911c7eb9b5b6b541fac923a09
+    tag: 1.0.0
+  haproxy:
+    repository: watson-stt-haproxy
+    digest: sha256:f9545e7059d9f86ad9539dee2f83f79e63d8578816120540f3f9f14f674e545e
+    tag: 1.0.0
+  catalog:
+    repository: watson-stt-generic-models
+    digest: sha256:4bfe7e0eba7c56458032d0a580cfa43f5cb6fd4a9db8a4407c3fa250b547b541
+    tag: 1.0.0
+
+# Configures the resources
+resources:
+  runtime:
+    requests:
+      cpu: 1
+      memory: 4Gi
+      ephemeral-storage: 4Gi
+    limits:
+      cpu: 4
+      memory: 4Gi
+      ephemeral-storage: 4Gi
+  haproxy:
+    requests:
+      cpu: 0.2
+      memory: 1Gi
+      ephemeral-storage: 64Mi
+    limits:
+      cpu: 1
+      memory: 1Gi
+      ephemeral-storage: 64Mi
+
+defaultModel: en-US_Multimedia
+models:
+  arMSTelephony:
+    catalogName: ar-MS_Telephony
+    repository: watson-stt-ar-ms-telephony
+    digest: sha256:b2d58b44017b5ff088f7e678a368b3fd0d72d7baefb302bbaf04cfd48b6bae0f
+    tag: 1.0.0
+    enabled: false
+  csCZTelephony:
+    catalogName: cs-CZ_Telephony
+    repository: watson-stt-cs-cz-telephony
+    digest: sha256:c2b8b3fbb14980a72bb38d2de13c459dcfc6b42708d63abdc761d484590a7624
+    tag: 1.0.0
+    enabled: false
+  deDEMultimedia:
+    catalogName: de-DE_Multimedia
+    repository: watson-stt-de-de-multimedia
+    digest: sha256:914284dacb43b4b4b13c0068dddf4fe2c253d5efee6ffddd9712b2fad440e526
+    tag: 1.0.0
+    enabled: false
+  deDETelephony:
+    catalogName: de-DE_Telephony
+    repository: watson-stt-de-de-telephony
+    digest: sha256:655054d10cb1e2c9f1822fb21e251d10a0432f360780bda8bafd6a77d7a2c4b7
+    tag: 1.0.0
+    enabled: false
+  enINTelephony:
+    catalogName: en-IN_Telephony
+    repository: watson-stt-en-in-telephony
+    digest: sha256:76d2940804dd1ae2435e305a052c6178a6d4036cb54e2b42cadd0f7f66e854c4
+    tag: 1.0.0
+    enabled: false
+  enUSMultimedia:
+    catalogName: en-US_Multimedia
+    repository: watson-stt-en-us-multimedia
+    digest: sha256:ad0b85f018b6ccd2ebe07f6b2979840c94a3e4076368d59fd6ebcb57b2df842b
+    tag: 1.0.0
+    enabled: true
+  enUSTelephony:
+    catalogName: en-US_Telephony
+    repository: watson-stt-en-us-telephony
+    digest: sha256:fb2e5cf4b9ab76af0ee7d3a774b518fbab3eaac82e1564fe7910bd90fa8a70a7
+    tag: 1.0.0
+    enabled: true
+  enWWMedicalTelephony:
+    catalogName: en-WW_Medical_Telephony
+    repository: watson-stt-en-ww-medical-telephony
+    digest: sha256:d231b5058eea28cdeff005bc48365f600d9343df580979b781d53bf742d7ff15
+    tag: 1.0.0
+    enabled: false
+  esESMultimedia:
+    catalogName: es-ES_Multimedia
+    repository: watson-stt-es-es-multimedia
+    digest: sha256:082b0ca2f90c6519ee7303be56d68bc95b3655cb14c41bd8ad09a4960bff5015
+    tag: 1.0.0
+    enabled: false
+  esESTelephony:
+    catalogName: es-ES_Telephony
+    repository: watson-stt-es-es-telephony
+    digest: sha256:d3fb27ae270d35f5948e7906680df52b329e473738e3cb1e49edc663384d1a8c
+    tag: 1.0.0
+    enabled: false
+  esLATelephony:
+    catalogName: es-LA_Telephony
+    repository: watson-stt-es-la-telephony
+    digest: sha256:e5521acc6af46f6a2f8ef1a5f388872c75003be0063ff0db6868866ee7f1dd70
+    tag: 1.0.0
+    enabled: false
+  frFRMultimedia:
+    catalogName: fr-FR_Multimedia
+    repository: watson-stt-fr-fr-multimedia
+    digest: sha256:9818391a631df91eda10a26120efa0c699e1c4511e2c17b511468d80be20e8f3
+    tag: 1.0.0
+    enabled: false
+  frFRTelephony:
+    catalogName: fr-FR_Telephony
+    repository: watson-stt-fr-fr-telephony
+    digest: sha256:0c0694d7835dcd47e3c16641d64d998613396c6acddb62b9e0a151719e970785
+    tag: 1.0.0
+    enabled: false
+  hiINTelephony:
+    catalogName: hi-IN_Telephony
+    repository: watson-stt-hi-in-telephony
+    digest: sha256:c23a402e282f48efc993f95e32057d6f1c16d6e5042671f87864e7dd2aa2ac2c
+    tag: 1.0.0
+    enabled: false
+  itITTelephony:
+    catalogName: it-IT_Telephony
+    repository: watson-stt-it-it-telephony
+    digest: sha256:8ca6e2209ceff203bc63f33e7871fab0712f46e49e0cc37e92d8be00a9814f38
+    tag: 1.0.0
+    enabled: false
+  jaJPMultimedia:
+    catalogName: ja-JP_Multimedia
+    repository: watson-stt-ja-jp-multimedia
+    digest: sha256:6df67bdf156f4dcfec4e7c92e022e20e64e2c55010b9e69c92e4de9518c9ba79
+    tag: 1.0.0
+    enabled: false
+  koKRMultimedia:
+    catalogName: ko-KR_Multimedia
+    repository: watson-stt-ko-kr-multimedia
+    digest: sha256:46158c3a79b6d6f90cd814a9c70431d0d31143fa6904661152d220608f673a36
+    tag: 1.0.0
+    enabled: false
+  koKRTelephony:
+    catalogName: ko-KR_Telephony
+    repository: watson-stt-ko-kr-telephony
+    digest: sha256:482258035688a07aaf8b7ee5e0e31ffde421dcd710d6df84c60bbb5417c29fe4
+    tag: 1.0.0
+    enabled: false
+  nlBETelephony:
+    catalogName: nl-BE_Telephony
+    repository: watson-stt-nl-be-telephony
+    digest: sha256:c116c00eb180ff0cc7935363b9f08775a3265e9ac7486bad9d88c6a72ad94533
+    tag: 1.0.0
+    enabled: false
+  nlNLTelephony:
+    catalogName: nl-NL_Telephony
+    repository: watson-stt-nl-nl-telephony
+    digest: sha256:794a7ba8f212935461fa5936fbce49e17df54d2f2c9f49529e883501bf8ef369
+    tag: 1.0.0
+    enabled: false
+  zhCNTelephony:
+    catalogName: zh-CN_Telephony
+    repository: watson-stt-zh-cn-telephony
+    digest: sha256:52c41fe7433126153027e1e69163848f74249da580c374f2413c615d8737d1dc
+    tag: 1.0.0
+    enabled: false

@@ -1,0 +1,11 @@
+{{- define "ibm-watson-stt-embed-runtime.fullname" -}}
+  {{- include "ibm-embed-helpers.fullname" . -}}
+{{- end }}
+
+{{- define "ibm-watson-stt-embed-runtime.labels" -}}
+  {{- include "ibm-embed-helpers.labels" (list . "runtime") -}}
+{{- end }}
+
+{{- define "ibm-watson-stt-embed-runtime.selectorLabels" -}}
+  {{- include "ibm-embed-helpers.selectorLabels" (list . "runtime") -}}
+{{- end }}

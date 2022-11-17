@@ -1,0 +1,24 @@
+{{/*
+Generate a Certificate Authority Cert
+*/}}
+{{- $rootca := genCA "ibm-watson-tts-embed-runtime-ca" 3650 -}}
+
+{{/*
+Server Certificate
+*/}}
+{{- $altNames := list -}}
+{{- $runtimeService := include "ibm-watson-tts-embed-runtime.fullname" . -}}
+{{- $altNames := append $altNames "localhost" -}}
+{{- $altNames := append $altNames (printf "%s" $runtimeService) -}}
+{{- $altNames := append $altNames (printf "%s.%s" $runtimeService .Release.Namespace) -}}
+{{- $altNames := append $altNames (printf "%s.%s.svc" $runtimeService .Release.Namespace) -}}
+{{- $serverCert := include "ibm-embed-helpers.genCert" (list $rootca $altNames) | fromJson -}}
+
+apiVersion: v1
+kind: Secret
+type: kubernetes.io/tls
+metadata:
+  name: {{ include "ibm-watson-tts-embed-runtime.fullname" . }}-tls-server
+  labels:
+    {{- include "ibm-watson-tts-embed-runtime.labels" . | nindent 4 }}
+stringData: {{- include "ibm-embed-helpers.certStringdata" (list $rootca $serverCert) -}}
