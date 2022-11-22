@@ -96,6 +96,12 @@ models:
     digest: sha256:3595ecc0561f0228d4141edfdd62febdee8a68a7b62b4dad5d055da7f59f95d2
     tag: 1.0.0
     enabled: false
+  enUSHenryV3Voice:
+    catalogName: en-US_HenryV3Voice
+    repository: watson-tts-en-us-henryv3voice
+    digest: sha256:f25dedc3e80b7f2d35076cc09a91b5db6d2a644b30f7c093ca6a2e48cbc39bfd
+    tag: 1.0.0
+    enabled: false
   enUSKevinV3Voice:
     catalogName: en-US_KevinV3Voice
     repository: watson-tts-en-us-kevinv3voice
