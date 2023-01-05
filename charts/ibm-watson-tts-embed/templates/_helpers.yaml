@@ -1,0 +1,47 @@
+{{/*
+Use templates to define names and labels
+*/}}
+
+{{- define "ibm-watson-tts-embed.fullname" -}}
+  {{- include "ibm-embed-helpers.fullname" . -}}
+{{- end -}}
+
+{{- define "ibm-watson-tts-embed.runtime.fullname" -}}
+  {{- include "ibm-embed-helpers.componentName" (list . "runtime") -}}
+{{- end -}}
+
+{{- define "ibm-watson-tts-embed.runtime.labels" -}}
+  {{- include "ibm-embed-helpers.labels" (list . "runtime") -}}
+{{- end -}}
+
+{{- define "ibm-watson-tts-embed.runtime.selectorLabels" -}}
+  {{- include "ibm-embed-helpers.selectorLabels" (list . "runtime") -}}
+{{- end -}}
+
+{{- define "ibm-watson-tts-embed.customization.fullname" -}}
+  {{- include "ibm-embed-helpers.componentName" (list . "customization") -}}
+{{- end -}}
+
+{{- define "ibm-watson-tts-embed.customization.labels" -}}
+  {{- include "ibm-embed-helpers.labels" (list . "customization") -}}
+{{- end -}}
+
+{{- define "ibm-watson-tts-embed.customization.selectorLabels" -}}
+  {{- include "ibm-embed-helpers.selectorLabels" (list . "customization") -}}
+{{- end -}}
+
+{{- define "ibm-watson-tts-embed.pki.labels" -}}
+  {{- include "ibm-embed-helpers.labels" (list . "pki") -}}
+{{- end -}}
+
+{{- define "ibm-watson-tts-embed.tests.fullname" -}}
+  {{- include "ibm-embed-helpers.componentName" (list . "tests") -}}
+{{- end -}}
+
+{{- define "ibm-watson-tts-embed.tests.labels" -}}
+  {{- include "ibm-embed-helpers.labels" (list . "tests") -}}
+{{- end -}}
+
+{{- define "ibm-watson-tts-embed.tests.selectorLabels" -}}
+  {{- include "ibm-embed-helpers.selectorLabels" (list . "tests") -}}
+{{- end -}}

@@ -2,10 +2,8 @@
   {{- fail "Product licenses must be read and accepted. Then set `license` to true" }}
 {{- end }}
 
-{{- /* Construct the list of model images to use in initContainers */}}
+{{- /* Construct the list of enabled models */}}
 {{- $enabledModels := (include "ibm-embed-helpers.enabledModelImageConfigs" .) | fromYamlArray }}
-
-{{- /* Construct the list of model ids */}}
 {{- $modelsList := (list) }}
 {{- range $enabledModels }}
   {{- $modelsList = append $modelsList .catalogName }}
@@ -14,84 +12,30 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ include "ibm-watson-tts-embed-runtime.fullname" . }}
+  name: {{ include "ibm-watson-tts-embed.runtime.fullname" . }}
   labels:
-    {{- include "ibm-watson-tts-embed-runtime.labels" . | nindent 4 }}
+    {{- include "ibm-watson-tts-embed.runtime.labels" . | nindent 4 }}
 spec:
   selector:
     matchLabels:
-      {{- include "ibm-watson-tts-embed-runtime.selectorLabels" . | nindent 6 }}
+      {{- include "ibm-watson-tts-embed.runtime.selectorLabels" . | nindent 6 }}
   progressDeadlineSeconds: 1800
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 3
+      maxUnavailable: 1
   template:
     metadata:
       labels:
-        {{- include "ibm-watson-tts-embed-runtime.labels" . | nindent 8 }}
+        {{- include "ibm-watson-tts-embed.runtime.labels" . | nindent 8 }}
+      annotations:
+        checksum/secrets: {{ include (print .Template.BasePath "/runtime/secrets.yaml") . | sha256sum }}
     spec:
       imagePullSecrets:
         {{- .Values.imagePullSecrets | toYaml | nindent 8 }}
-
       {{- include "ibm-embed-helpers.podSecurityContext" . | nindent 6 -}}
-
-      initContainers:
-      - name: catalog
-        image: {{ include "ibm-embed-helpers.imageReference" (list . .Values.images.catalog) }}
-        {{- include "ibm-embed-helpers.containerSecurityContext" . | nindent 8 -}}
-        env:
-        - name: ACCEPT_LICENSE
-          value: {{ $.Values.license | quote }}
-        resources:
-          {{- $.Values.resources.runtime | toYaml | nindent 10 }}
-        # use args to not override license entrypoint
-        args: ["cp", "catalog.json", "/opt/ibm/chuck.x86_64/var/catalog.json"]
-        volumeMounts:
-        - name: chuck-var
-          mountPath: /opt/ibm/chuck.x86_64/var
-
-      {{- range $model := $enabledModels }}
-      - name: {{ $model.repository }}
-        image: {{ include "ibm-embed-helpers.imageReference" (list $ $model) }}
-        {{- include "ibm-embed-helpers.containerSecurityContext" $ | nindent 8 -}}
-        env:
-        - name: ACCEPT_LICENSE
-          value: {{ $.Values.license | quote }}
-        resources:
-          {{- $.Values.resources.runtime | toYaml | nindent 10 }}
-        # use args to not override license entrypoint
-        args:
-        - sh
-        - -c
-        - cp model/* /models/pool2
-        volumeMounts:
-        - name: chuck-models
-          mountPath: /models/pool2
-      {{- end }}
-
-      - name: prepare-models
-        image: {{ include "ibm-embed-helpers.imageReference" (list . .Values.images.runtime) }}
-        {{- include "ibm-embed-helpers.containerSecurityContext" . | nindent 8 -}}
-        # use args to not override license entrypoint
-        args: ["prepare_models.sh"]
-        env:
-        - name: ACCEPT_LICENSE
-          value: {{ $.Values.license | quote }}
-        - name: CATALOG_PATH
-          value: "var/catalog.json"
-        - name: MODELS
-          value: {{ join "," $modelsList }}
-        - name: DEFAULT_MODEL
-          value: {{ .Values.defaultModel | quote }}
-        resources:
-          {{- .Values.resources.runtime | toYaml | nindent 10 }}
-        volumeMounts:
-        - name: chuck-var
-          mountPath: /opt/ibm/chuck.x86_64/var
-        - name: chuck-logs
-          mountPath: /opt/ibm/chuck.x86_64/logs
-        - name: chuck-models
-          mountPath: /models/pool2
-        - name: tmp
-          mountPath: /tmp
-
+      terminationGracePeriodSeconds: 1800
       containers:
       - name: runtime
         image: {{ include "ibm-embed-helpers.imageReference" (list . .Values.images.runtime) }}
@@ -100,13 +44,37 @@ spec:
           {{- .Values.resources.runtime | toYaml | nindent 10 }}
         env:
         - name: ACCEPT_LICENSE
-          value: {{ $.Values.license | quote }}
+          value: {{ .Values.license | quote }}
+        - name: LOG_LEVEL
+          value: "INFO"
+        - name: USE_LOCAL_MODELS
+          value: "false"
+        - name: ENABLE_CUSTOMIZATIONS
+          value: {{ .Values.customizationEnabled | quote }}
         - name: CATALOG_PATH
-          value: "var/catalog.json"
+          value: "{{ .Values.modelVersion }}/catalog.json"
+        - name: RUNTIME_SERVICE
+          value: "{{ include "ibm-watson-tts-embed.runtime.fullname" . }}:443"
+        - name: CUSTOMIZATIONS_SERVICE
+          value: "{{ include "ibm-watson-tts-embed.customization.fullname" . }}:443"
         - name: MODELS
           value: {{ join "," $modelsList }}
         - name: DEFAULT_MODEL
           value: {{ .Values.defaultModel | quote }}
+        - name: MODEL_STORAGE_BUCKET
+          value: {{ .Values.objectStorage.bucket | quote }}
+        - name: MODEL_STORAGE_ENDPOINT
+          value: {{ .Values.objectStorage.endpoint | quote }}
+        - name: MODEL_STORAGE_ACCESS_KEY
+          valueFrom:
+            secretKeyRef:
+              name: {{ include "ibm-watson-tts-embed.runtime.fullname" . }}
+              key: accesskey
+        - name: MODEL_STORAGE_SECRET_KEY
+          valueFrom:
+            secretKeyRef:
+              name: {{ include "ibm-watson-tts-embed.runtime.fullname" . }}
+              key: secretkey
         - name: RESOURCES_CPU
           valueFrom:
             resourceFieldRef:
@@ -130,14 +98,16 @@ spec:
           periodSeconds: 10
         readinessProbe:
           httpGet:
-             path: /v1/miniHealthCheck
-             port: 1080
+            path: /v1/miniHealthCheck
+            port: 1080
           periodSeconds: 10
         volumeMounts:
-        - name: chuck-var
-          mountPath: /opt/ibm/chuck.x86_64/var
-        - name: chuck-logs
-          mountPath: /opt/ibm/chuck.x86_64/logs
+        - mountPath: /opt/ibm/chuck.x86_64/var
+          name: chuck-var
+        - mountPath: /opt/ibm/chuck.x86_64/logs
+          name: chuck-logs
+        - mountPath: /etc/ssl/private/client
+          name: client-tls
         - name: tmp
           mountPath: /tmp
         lifecycle:
@@ -185,15 +155,16 @@ spec:
       volumes:
         - name: chuck-var
           emptyDir: {}
-        - name: chuck-models
-          emptyDir: {}
-        - name: chuck-cache
-          emptyDir: {}
         - name: chuck-logs
           emptyDir: {}
         - name: server-tls
           secret:
-            secretName: {{ include "ibm-watson-tts-embed-runtime.fullname" . }}-tls-server
+            defaultMode: 420
+            secretName: {{ include "ibm-watson-tts-embed.fullname" . }}-server-tls
+        - name: client-tls
+          secret:
+            defaultMode: 420
+            secretName: {{ include "ibm-watson-tts-embed.fullname" . }}-client-tls
         - name: tmp
           emptyDir: {}
 

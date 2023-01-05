@@ -1,0 +1,179 @@
+{{- if not (eq .Values.license true) }}
+  {{- fail "Product licenses must be read and accepted. Then set `license` to true" }}
+{{- end }}
+
+{{- if .Values.customizationEnabled }}
+{{- include "ibm-embed-helpers.requirePostgres" . }}
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "ibm-watson-tts-embed.customization.fullname" . }}
+  labels:
+    {{- include "ibm-watson-tts-embed.customization.labels" . | nindent 4 }}
+spec:
+  selector:
+    matchLabels:
+      {{- include "ibm-watson-tts-embed.customization.selectorLabels" . | nindent 6 }}
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 2
+      maxUnavailable: 0
+  template:
+    metadata:
+      labels:
+        {{- include "ibm-watson-tts-embed.customization.labels" . | nindent 8 }}
+      annotations:
+        checksum/secrets: {{ include (print .Template.BasePath "/customization/secrets.yaml") . | sha256sum }}
+    spec:
+      {{- include "ibm-embed-helpers.podSecurityContext" . | nindent 6 -}}
+      imagePullSecrets:
+        {{- .Values.imagePullSecrets | toYaml | nindent 8 }}
+      terminationGracePeriodSeconds: 10
+      initContainers:
+        - name: wait4db
+          image: {{ include "ibm-embed-helpers.imageReference" (list . .Values.images.utils) }}
+          {{- include "ibm-embed-helpers.containerSecurityContext" . | nindent 10 -}}
+          env:
+          - name: ACCEPT_LICENSE
+            value: {{ .Values.license | quote }}
+          {{- with .Values.postgres }}
+          - name: PGHOST
+            value: "{{ .host }}"
+          - name: PGPORT
+            value: "{{ .port }}"
+          - name: PGDATABASE
+            value: "{{ .loginDatabase }}"
+          - name: CUSTOMIZATIONS_DATABASE_NAME
+            value: "{{ .databaseName }}"
+          - name: CUSTOMIZATIONS_DATABASE_OWNER
+            value: "{{ .user }}"
+          {{- end }}
+          - name: PGUSER
+            valueFrom:
+              secretKeyRef:
+                name: {{ include "ibm-watson-tts-embed.customization.fullname" . }}
+                key: postgresUser
+          - name: PGPASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: {{ include "ibm-watson-tts-embed.customization.fullname" . }}
+                key: postgresPassword
+
+      containers:
+        - name: customization
+          image: {{ include "ibm-embed-helpers.imageReference" (list . .Values.images.customization) }}
+          {{- include "ibm-embed-helpers.containerSecurityContext" . | nindent 10 -}}
+          resources:
+            {{- .Values.resources.customization | toYaml | nindent 12 }}
+          env:
+          - name: ACCEPT_LICENSE
+            value: {{ .Values.license | quote }}
+          - name: JAVA_HEAP_PERCENT
+            value: "80"
+          - name: RESOURCES_MEMORY
+            valueFrom:
+              resourceFieldRef:
+                resource: requests.memory
+          - name: CLIENT_AUTH
+            value: "want"
+          {{- with .Values.postgres }}
+          - name: CUSTOMIZATIONS_POSTGRES_HOST
+            value: "{{ .host }}"
+          - name: CUSTOMIZATIONS_POSTGRES_PORT
+            value: "{{ .port }}"
+          - name: CUSTOMIZATIONS_DATABASE_NAME
+            value: "{{ .databaseName }}"
+          {{- end }}
+          - name: CUSTOMIZATIONS_POSTGRES_USER
+            valueFrom:
+              secretKeyRef:
+                name: {{ include "ibm-watson-tts-embed.customization.fullname" . }}
+                key: postgresUser
+          - name: CUSTOMIZATIONS_POSTGRES_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: {{ include "ibm-watson-tts-embed.customization.fullname" . }}
+                key: postgresPassword
+          {{- with .Values.objectStorage }}
+          - name: CUSTOMIZATIONS_STORAGE_ENDPOINT
+            value: "{{ .endpoint }}"
+          - name: CUSTOMIZATIONS_STORAGE_REGION
+            value: "{{ .region }}"
+          - name: CUSTOMIZATIONS_STORAGE_BUCKET
+            value: "{{ .bucket }}"
+          {{- end }}
+          - name: CUSTOMIZATIONS_STORAGE_ACCESS_KEY
+            valueFrom:
+              secretKeyRef:
+                name: {{ include "ibm-watson-tts-embed.customization.fullname" . }}
+                key: objectStorageAccessKey
+          - name: CUSTOMIZATIONS_STORAGE_SECRET_KEY
+            valueFrom:
+              secretKeyRef:
+                name: {{ include "ibm-watson-tts-embed.customization.fullname" . }}
+                key: objectStorageSecretKey
+          - name: RUNTIME_SERVICE
+            value: {{ include "ibm-watson-tts-embed.runtime.fullname" . }}:443
+          # do not write logs to file
+          - name: LOGGING_FILE_PATH
+            value: ""
+          - name: LOGGING_FILE_NAME
+            value: ""
+          ports:
+          - containerPort: 9080 # for health checks
+          - containerPort: 9443
+          volumeMounts:
+          - name: tmp
+            mountPath: /tmp
+          - name: varlog
+            mountPath: /var/log
+          - name: server-ssl
+            mountPath: /etc/ssl/private/server
+            readOnly: true
+          - name: client-ssl
+            mountPath: /etc/ssl/private/client
+            readOnly: true
+          startupProbe:
+            httpGet:
+              path: "/text-to-speech/api/health/check"
+              port: 9080
+            failureThreshold: 30
+            periodSeconds: 10
+          livenessProbe:
+            httpGet:
+              path: "/text-to-speech/api/health/check"
+              port: 9080
+            periodSeconds: 10
+            timeoutSeconds: 10
+          readinessProbe:
+            httpGet:
+              path: "/text-to-speech/api/health/check/readiness"
+              port: 9080
+            periodSeconds: 10
+            timeoutSeconds: 10
+
+      volumes:
+        - name: varlog
+          emptyDir: {}
+        - name: server-ssl
+          secret:
+            secretName: {{ include "ibm-watson-tts-embed.fullname" . }}-server-tls
+        - name: client-ssl
+          secret:
+            secretName: {{ include "ibm-watson-tts-embed.fullname" . }}-client-tls
+        - name: tmp
+          emptyDir: {}
+
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+            - matchExpressions:
+              - key: "kubernetes.io/arch"
+                operator: In
+                values:
+                  - "amd64"
+
+{{- end -}}

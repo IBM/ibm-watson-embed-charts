@@ -1,0 +1,41 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: {{ include "ibm-watson-stt-embed.tests.fullname" . }}
+  labels:
+    {{- include "ibm-watson-stt-embed.tests.labels" . | nindent 4 }}
+  annotations:
+    "helm.sh/hook": test
+    "helm.sh/hook-weight": "0"
+    "helm.sh/hook-delete-policy": before-hook-creation,hook-succeeded
+spec:
+  backoffLimit: 3
+  template:
+    metadata:
+      labels:
+        {{- include "ibm-watson-stt-embed.tests.labels" . | nindent 8 }}
+    spec:
+      restartPolicy: Never
+      containers:
+        - name: healthchecks
+          # use the fact that the runtime has useful tools installed
+          image: {{ include "ibm-embed-helpers.imageReference" (list . .Values.images.runtime) }}
+          command: ["bash", "/scripts/health_checks.sh"]
+          # set working dir to /tmp to have write permissions
+          workingDir: /tmp
+          volumeMounts:
+          - mountPath: /scripts
+            name: test-scripts
+      volumes:
+        - name: test-scripts
+          configMap:
+            name: {{ include "ibm-watson-stt-embed.tests.fullname" . }}
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+            - matchExpressions:
+              - key: "kubernetes.io/arch"
+                operator: In
+                values:
+                  - "amd64"

@@ -1,12 +1,15 @@
 {{- if not (eq .Values.license true) }}
-{{- fail "Product licenses must be read and accepted. Then set `license` to true" }}
+  {{- fail "Product licenses must be read and accepted. Then set `license` to true" }}
 {{- end }}
 
 {{- /* Construct the list of model images to use in initContainers */}}
-{{- $modelsList := (include "ibm-embed-helpers.enabledModelImageConfigs" .) | fromYamlArray }}
+{{- $enabledModels := (include "ibm-embed-helpers.enabledModelImageConfigs" .) | fromYamlArray }}
 
-{{- /* Always include the model catalog upload */}}
-{{- $modelsList = concat (list .Values.images.catalog) $modelsList }}
+{{- /* Construct the list of model ids */}}
+{{- $modelsList := (list) }}
+{{- range $enabledModels }}
+  {{- $modelsList = append $modelsList .catalogName }}
+{{- end }}
 
 apiVersion: apps/v1
 kind: Deployment
@@ -30,23 +33,29 @@ spec:
       {{- include "ibm-embed-helpers.podSecurityContext" . | nindent 6 -}}
 
       initContainers:
-      {{- range $index, $model := $modelsList }}
-      - name: {{ $model.repository }}
-        image: {{ include "ibm-embed-helpers.imageReference" (list $ $model) }}
+      - name: catalog
+        image: {{ include "ibm-embed-helpers.imageReference" (list . .Values.images.catalog) }}
         {{- include "ibm-embed-helpers.containerSecurityContext" . | nindent 8 -}}
         env:
         - name: ACCEPT_LICENSE
           value: {{ $.Values.license | quote }}
         resources:
           {{- $.Values.resources.runtime | toYaml | nindent 10 }}
-
-        {{- if contains "generic-models" $model.repository }}
         # use args to not override license entrypoint
-        args: ["cp", "catalog.json", "/opt/ibm/chuck.x86_64/var"]
+        args: ["cp", "catalog.json", "/opt/ibm/chuck.x86_64/var/catalog.json"]
         volumeMounts:
         - name: chuck-var
           mountPath: /opt/ibm/chuck.x86_64/var
-        {{- else }}
+
+      {{- range $model := $enabledModels }}
+      - name: {{ $model.repository }}
+        image: {{ include "ibm-embed-helpers.imageReference" (list $ $model) }}
+        {{- include "ibm-embed-helpers.containerSecurityContext" $ | nindent 8 -}}
+        env:
+        - name: ACCEPT_LICENSE
+          value: {{ $.Values.license | quote }}
+        resources:
+          {{- $.Values.resources.runtime | toYaml | nindent 10 }}
         # use args to not override license entrypoint
         args:
         - sh
@@ -55,17 +64,22 @@ spec:
         volumeMounts:
         - name: chuck-models
           mountPath: /models/pool2
-        {{- end }}
       {{- end }}
 
       - name: prepare-models
         image: {{ include "ibm-embed-helpers.imageReference" (list . .Values.images.runtime) }}
         {{- include "ibm-embed-helpers.containerSecurityContext" . | nindent 8 -}}
         # use args to not override license entrypoint
-        args: ["bash", "/prepareModels.sh"]
+        args: ["prepare_models.sh"]
         env:
         - name: ACCEPT_LICENSE
           value: {{ $.Values.license | quote }}
+        - name: CATALOG_PATH
+          value: "var/catalog.json"
+        - name: MODELS
+          value: {{ join "," $modelsList }}
+        - name: DEFAULT_MODEL
+          value: {{ .Values.defaultModel | quote }}
         resources:
           {{- .Values.resources.runtime | toYaml | nindent 10 }}
         volumeMounts:
@@ -75,12 +89,6 @@ spec:
           mountPath: /opt/ibm/chuck.x86_64/logs
         - name: chuck-models
           mountPath: /models/pool2
-        - name: config
-          subPath: prepareModels.sh
-          mountPath: "/prepareModels.sh"
-        - name: config
-          mountPath: /opt/ibm/chuck.x86_64/var/env_config.json
-          subPath: env_config.json
         - name: tmp
           mountPath: /tmp
 
@@ -93,12 +101,18 @@ spec:
         env:
         - name: ACCEPT_LICENSE
           value: {{ $.Values.license | quote }}
-        - name: KUBERNETES_RESOURCE_CPUS
+        - name: CATALOG_PATH
+          value: "var/catalog.json"
+        - name: MODELS
+          value: {{ join "," $modelsList }}
+        - name: DEFAULT_MODEL
+          value: {{ .Values.defaultModel | quote }}
+        - name: RESOURCES_CPU
           valueFrom:
             resourceFieldRef:
               containerName: runtime
               resource: requests.cpu
-        - name: KUBERNETES_RESOURCE_MEM
+        - name: RESOURCES_MEMORY
           valueFrom:
             resourceFieldRef:
               containerName: runtime
@@ -108,36 +122,22 @@ spec:
         startupProbe:
           tcpSocket:
             port: 1080
-          periodSeconds: 30
-          failureThreshold: 12
-        readinessProbe:
-          httpGet:
-             port: 1080
-             path: /v1/miniHealthCheck
+          failureThreshold: 30
           periodSeconds: 10
-          timeoutSeconds: 1
         livenessProbe:
           tcpSocket:
             port: 1080
-          periodSeconds: 30
+          periodSeconds: 10
+        readinessProbe:
+          httpGet:
+             path: /v1/miniHealthCheck
+             port: 1080
+          periodSeconds: 10
         volumeMounts:
         - name: chuck-var
           mountPath: /opt/ibm/chuck.x86_64/var
         - name: chuck-logs
           mountPath: /opt/ibm/chuck.x86_64/logs
-        - name: config
-          subPath: env_config.json
-          mountPath: /opt/ibm/chuck.x86_64/var/env_config.json
-        - name: config
-          subPath: sessionPools.yaml
-          mountPath: /opt/ibm/chuck.x86_64/var/sessionPools.yaml
-        - name: config
-          subPath: sessionPools.py
-          mountPath: /opt/ibm/chuck.x86_64/var/sessionPools.py
-        - name: config
-          subPath: resourceRequirements.py
-          mountPath: /opt/ibm/chuck.x86_64/var/resourceRequirements.py
-        # ephemeral volume for scratch space
         - name: tmp
           mountPath: /tmp
         lifecycle:
@@ -150,40 +150,35 @@ spec:
       - name: haproxy
         image: {{ include "ibm-embed-helpers.imageReference" (list . .Values.images.haproxy) }}
         {{- include "ibm-embed-helpers.containerSecurityContext" . | nindent 8 -}}
-        # use args to not override license entrypoint
-        args:
-          - sh
-          - -c
-          # HAProxy needs a single file with the key and cert
-          #   write combined file to a read-write mount
-          - cat /etc/ssl/private/server/tls.crt /etc/ssl/private/server/tls.key > /tmp/haproxy.tls;
-            exec /runHaproxy.sh;
         resources:
           {{- .Values.resources.haproxy | toYaml | nindent 10 }}
         env:
         - name: ACCEPT_LICENSE
           value: {{ .Values.license | quote }}
+        - name: TLS_SERVER_CERT_FILE
+          value: /etc/ssl/private/server/tls.crt
+        - name: TLS_SERVER_KEY_FILE
+          value: /etc/ssl/private/server/tls.key
         ports:
         - containerPort: 1443
+        startupProbe:
+          tcpSocket:
+            port: 1443
+          failureThreshold: 30
+          periodSeconds: 10
+        livenessProbe:
+          tcpSocket:
+            port: 1443
+          periodSeconds: 10
         readinessProbe:
           httpGet:
             path: /v1
             port: 1443
             scheme: HTTPS
-          initialDelaySeconds: 10
           periodSeconds: 10
-          timeoutSeconds: 1
-        livenessProbe:
-          tcpSocket:
-            port: 1443
-          initialDelaySeconds: 15
-          periodSeconds: 30
         volumeMounts:
         - mountPath: /etc/ssl/private/server
           name: server-tls
-        - mountPath: /etc/haproxy/haproxy.cfg
-          name: config
-          subPath: haproxy.cfg
         - name: tmp
           mountPath: /tmp
 
@@ -196,14 +191,11 @@ spec:
           emptyDir: {}
         - name: chuck-logs
           emptyDir: {}
-        - name: config
-          configMap:
-            name: {{ include "ibm-watson-stt-embed-runtime.fullname" . }}
-        - name: tmp
-          emptyDir: {}
         - name: server-tls
           secret:
             secretName: {{ include "ibm-watson-stt-embed-runtime.fullname" . }}-tls-server
+        - name: tmp
+          emptyDir: {}
 
       affinity:
         nodeAffinity:

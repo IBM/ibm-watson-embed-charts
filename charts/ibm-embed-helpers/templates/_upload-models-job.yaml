@@ -1,0 +1,119 @@
+{{- if not (eq .Values.license true) }}
+  {{- fail "Product licenses must be read and accepted. Then set `license` to true" }}
+{{- end }}
+
+{{- /* Groups models into sets to be uploaded in parallel */ -}}
+{{- define "ibm-embed-helpers.uploaderListOfLists" -}}
+  {{- $params := . -}}
+  {{- $modelList := index $params 0 -}}
+  {{- $uploaderConcurrency := index $params 1 -}}
+
+  {{- $setCounter := 0 -}}
+  {{- $counter := 0 -}}
+  {{- range $model := $modelList -}}
+    {{- if eq (mod $counter $uploaderConcurrency) 0 -}}
+      {{- $setCounter = add $setCounter 1 -}}
+      {{- printf "set%v:\n" $setCounter -}}
+    {{- end -}}
+    {{- printf "  - %v\n" (toJson $model) -}}
+    {{- $counter = add $counter 1 -}}
+  {{- end -}}
+{{- end -}}
+
+{{- define "ibm-embed-helpers.speech.uploadModelsJob" -}}
+  {{- $params := . -}}
+  {{- $root := index $params 0 -}}
+  {{- $objectStorageSecretName := index $params 1 -}}
+
+  {{- include "ibm-embed-helpers.requireObjectStorage" $root -}}
+
+  {{- $modelsToUpload := (include "ibm-embed-helpers.enabledModelImageConfigs" $root) | fromYamlArray -}}
+  {{- /* Always include the model catalog upload */ -}}
+  {{- $modelsToUpload = concat (list $root.Values.images.catalog) $modelsToUpload -}}
+
+  {{- $uploaderListOfLists := (include "ibm-embed-helpers.uploaderListOfLists" (list $modelsToUpload $root.Values.uploadModelConcurrency) | fromYaml) -}}
+
+  {{- $objectStorage := $root.Values.objectStorage }}
+  {{- $compName := "uploader" }}
+  {{- range $setKey, $modelList := $uploaderListOfLists }}
+---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: {{ include "ibm-embed-helpers.componentName" (list $root $compName ) }}-{{ $setKey }}
+  labels:
+    {{- include "ibm-embed-helpers.labels" (list $root $compName) | nindent 4 }}
+  annotations:
+    "helm.sh/hook": pre-install,pre-upgrade
+    "helm.sh/hook-delete-policy": before-hook-creation,hook-succeeded
+    "helm.sh/hook-weight": "0"
+spec:
+  backoffLimit: 10
+  template:
+    metadata:
+      labels:
+        {{- include "ibm-embed-helpers.labels" (list $root $compName) | nindent 8 }}
+    spec:
+      {{- include "ibm-embed-helpers.podSecurityContext" . | nindent 6 -}}
+      imagePullSecrets:
+        {{- $root.Values.imagePullSecrets | toYaml | nindent 8 }}
+      restartPolicy: Never
+      containers:
+      {{- range $model := $modelList }}
+      - name: {{ $model.repository }}
+        image: {{ include "ibm-embed-helpers.imageReference" (list $root $model) }}
+        {{- include "ibm-embed-helpers.containerSecurityContext" $root | nindent 8 -}}
+        args: ["python3", "/upload_models.py"]
+        env:
+        - name: ACCEPT_LICENSE
+          value: {{ $root.Values.license | quote }}
+        - name: speech_models_endpoint_url
+          value: "{{ $objectStorage.endpoint }}"
+        - name: speech_models_bucket
+          value: "{{ $objectStorage.bucket }}"
+        - name: speech_models_secrets
+          value: /etc/chuck/secrets
+        {{- if contains "generic-models" $model.repository }}
+        - name: speech_models_catalog_file
+          value: "/catalog.json"
+        - name: speech_models_surl_suffix
+          value: {{ $root.Values.modelVersion }}
+        {{- end }}
+        - name: speech_models_local_dir
+          value: /model
+        - name: speech_models_multipart_upload
+          value: "1"
+        resources:
+          requests:
+            memory: "256Mi"
+            cpu: "0.1"
+          limits:
+            memory: "256Mi"
+            cpu: "0.1"
+        volumeMounts:
+        - name: secrets
+          mountPath: /etc/chuck/secrets/accesskey
+          subPath: accesskey
+          readOnly: true
+        - name: secrets
+          mountPath: /etc/chuck/secrets/secretkey
+          subPath: secretkey
+          readOnly: true
+      {{- end }}
+      volumes:
+      - name: secrets
+        secret:
+          secretName: {{ $objectStorageSecretName }}
+
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+            - matchExpressions:
+              - key: "kubernetes.io/arch"
+                operator: In
+                values:
+                  - "amd64"
+
+  {{- end -}}{{- /* range */ -}}
+{{- end -}}

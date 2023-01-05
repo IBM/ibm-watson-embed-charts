@@ -33,6 +33,14 @@ Truncate to 30 here to leave space for component names and generated suffixes.
   {{- end -}}
 {{- end -}}
 
+{{- define "ibm-embed-helpers.componentName" -}}
+  {{- $params := . -}}
+  {{- $root := index $params 0 -}}
+  {{- $compName := index $params 1 -}}
+
+  {{- printf "%s-%s" (include "ibm-embed-helpers.fullname" $root) $compName -}}
+{{- end -}}
+
 {{/*
 Resource labels
 */}}
@@ -64,30 +72,40 @@ app.kubernetes.io/component: "{{ $compName }}"
 Image reference with optional tag and digest
 */}}
 {{- define "ibm-embed-helpers.imageReference" -}}
-  {{- $root := index . 0 -}}
-  {{- $imageConfig := index . 1 -}}
-    {{- with $imageConfig -}}
-        {{- printf "%s/%s" $root.Values.containerRegistry .repository -}}
-        {{- if .tag -}}
-          {{- printf ":%s" .tag -}}
-        {{- end -}}
-        {{- if .digest -}}
-          {{- printf "@%s" .digest -}}
-        {{- end -}}
+  {{- $params := . -}}
+  {{- $root := index $params 0 -}}
+  {{- $imageConfig := index $params 1 -}}
+
+  {{- $registry := $root.Values.containerRegistry -}}
+
+  {{- with $imageConfig -}}
+    {{- printf "%s/%s" $registry .repository -}}
+    {{- if .tag -}}
+      {{- printf ":%s" .tag -}}
     {{- end -}}
-{{- end }}
+    {{- if .digest -}}
+      {{- printf "@%s" .digest -}}
+    {{- end -}}
+  {{- end -}}
+{{- end -}}
 
 {{/*
 Common Restrictive Security Contexts
 */}}
 {{- define "ibm-embed-helpers.containerSecurityContext" -}}
+  {{- $root := . -}}
+  {{- $readOnly := true -}}
+  {{- if hasKey .Values "readOnlyRootFilesystem" -}}
+    {{- $readOnly = .Values.readOnlyRootFilesystem -}}
+  {{- end -}}
+
   {{- "securityContext:" -}}
     {{- "allowPrivilegeEscalation: false" | nindent 2 -}}
     {{- "capabilities:" | nindent 2 -}}
       {{- "drop:" | nindent 4 -}}
       {{- "- ALL" | nindent 4 -}}
     {{- "privileged: false" | nindent 2 -}}
-    {{- "readOnlyRootFilesystem: true" | nindent 2 -}}
+    {{- (printf "readOnlyRootFilesystem: %v" $readOnly) | nindent 2 -}}
     {{- "runAsNonRoot: true" | nindent 2 -}}
   {{- "\n" -}}
 {{- end -}}
@@ -111,3 +129,28 @@ Common Restrictive Security Contexts
 
   {{- $images | toYaml -}}
 {{- end -}}
+
+{{/*
+Required configurations
+
+NB: the result of `required` is piped through `regexReplaceAll` to remove all
+content from the result to avoid errors like:
+  error unmarshaling JSON: json: cannot unmarshal string into Go value of type releaseutil.SimpleHead
+*/}}
+{{- define "ibm-embed-helpers.requireObjectStorage" -}}
+  {{- $message := "Configuration for s3 compatible storage is required in .Values.objectStorage, missing %s" -}}
+  {{- required (printf $message `'endpoint'`) .Values.objectStorage.endpoint | regexReplaceAll ".+" "" -}}
+  {{- required (printf $message `'region'`) .Values.objectStorage.region | regexReplaceAll ".+" "" -}}
+  {{- required (printf $message `'accessKey'`) .Values.objectStorage.accessKey | regexReplaceAll ".+" "" -}}
+  {{- required (printf $message `'secretKey'`) .Values.objectStorage.secretKey | regexReplaceAll ".+" "" -}}
+{{- end }}
+
+{{- define "ibm-embed-helpers.requirePostgres" -}}
+  {{- $message := "Configuration for a PostgreSQL databse is required in .Values.postgres, missing %s" -}}
+  {{- required (printf $message `'host'`) .Values.postgres.host | regexReplaceAll ".+" "" -}}
+  {{- required (printf $message `'port'`) .Values.postgres.port | quote | regexReplaceAll ".+" "" -}}
+  {{- required (printf $message `'loginDatabase'`) .Values.postgres.loginDatabase | regexReplaceAll ".+" "" -}}
+  {{- required (printf $message `'user'`) .Values.postgres.user | regexReplaceAll ".+" "" -}}
+  {{- required (printf $message `'password'`) .Values.postgres.password | regexReplaceAll ".+" "" -}}
+  {{- required (printf $message `'databaseName'`) .Values.postgres.databaseName | regexReplaceAll ".+" "" -}}
+{{- end }}

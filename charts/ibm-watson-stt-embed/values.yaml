@@ -12,14 +12,85 @@ containerRegistry: cp.icr.io/cp/ai
 imagePullSecrets:
   - name: ibm-entitlement-key
 
+# General Configuration
+
+customizationEnabled: true
+
 # readOnlyRootFilesystem controls the setting in the container security context
+#
+# NB: With customizationEnabled, the runtime container must have a read-write
+# filesystem to support training of customizations. The value here is not
+# respected for the runtime container in that case.
 readOnlyRootFilesystem: true
 
 serviceType: ClusterIP
+# uploadModelConcurrency controls the number of models uploaded per upload job
+# Jobs are run sequentially, so this affects the total duration.
+uploadModelConcurrency: 5
+
+# Service Dependencies
+
+# objectStorage has configuration for an s3 compatible object storage for models storage
+objectStorage:
+  endpoint: ""
+  region: ""
+  bucket: speech-embed
+  accessKey: ""
+  secretKey: ""
+
+# postgres has configuration for a PostgreSQL instance that will store data and
+# metadata for customizations
+postgres:
+  # host is the hostname of server hosting the Postgres instance
+  host: ""
+  # port to connect to on the hostname
+  port: 5432
+  # loginDatabase is the database used to establish the connection before creating the customizations database
+  loginDatabase: "postgres"
+  # user is the existing user that will own the customizations database and be used at runtime
+  user: ""
+  # password is the password for user
+  password: ""
+  # databaseName is the database that will be created/used to hold data about customizations
+  databaseName: "stt-customizations"
+
+# resources sets per-container resource allocations
+resources:
+  runtime:
+    requests:
+      memory: 4Gi
+      cpu: 1
+      ephemeral-storage: 4Gi
+    limits:
+      memory: 4Gi
+      cpu: 4
+      ephemeral-storage: 4Gi
+  haproxy:
+    requests:
+      memory: 1Gi
+      cpu: 0.2
+      ephemeral-storage: 64Mi
+    limits:
+      memory: 1Gi
+      cpu: 1
+      ephemeral-storage: 64Mi
+  customization:
+    requests:
+      memory: 2Gi
+      cpu: 0.5
+      ephemeral-storage: 2Gi
+    limits:
+      memory: 2Gi
+      cpu: 1
+      ephemeral-storage: 2Gi
 
 # images configures which container images are used
-# To pull by tag only, set digest to the empty string
+# To pull by tag, set digest to the empty string
 images:
+  utils:
+    repository: watson-stt-utils
+    digest: sha256:85db47edcbe03eb9b9d3d027eceaa23fca12d2baf668d985ed636a031d0d6ac1
+    tag: 1.1.0
   runtime:
     repository: watson-stt-runtime
     digest: sha256:67ed804a36993c82b69048fb3994db9d521edbe5426342be5ef4038b7829f2d9
@@ -28,34 +99,20 @@ images:
     repository: watson-stt-haproxy
     digest: sha256:dac68a1a44a670135abc38dd5ec3fa46345eba66f153415849f794bc5eb05377
     tag: 1.1.0
+  customization:
+    repository: watson-stt-customization
+    digest: sha256:9a5fa2b19d24c9ec753a41ca6593c2550a260f7b6c261f89db49b4fce1dd7687
+    tag: 1.1.0
   catalog:
     repository: watson-stt-generic-models
     digest: sha256:9af17a64681392c812b29fea49435187f65a70e9ed675fc8086b7402437bc3b4
     tag: 1.1.0
 
-# resources sets per-container resource allocations
-resources:
-  runtime:
-    requests:
-      cpu: 1
-      memory: 4Gi
-      ephemeral-storage: 4Gi
-    limits:
-      cpu: 4
-      memory: 4Gi
-      ephemeral-storage: 4Gi
-  haproxy:
-    requests:
-      cpu: 0.2
-      memory: 1Gi
-      ephemeral-storage: 64Mi
-    limits:
-      cpu: 1
-      memory: 1Gi
-      ephemeral-storage: 64Mi
 
 # defaultModel will be used if no model is included in the /recognize request
 defaultModel: en-US_Multimedia
+# modelVersion sets the path within model storage where the catalog will be uploaded
+modelVersion: "1.1.0"
 # models has configuration for model container images and model enablement
 # To pull by tag, set digest to the empty string
 models:
