@@ -1,0 +1,2 @@
+{{- $objectStorageSecretName := include "ibm-watson-stt-embed.runtime.fullname" . -}}
+{{- include "ibm-embed-helpers.speech.uploadModelsJob" (list . $objectStorageSecretName) -}}

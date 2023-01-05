@@ -11,7 +11,7 @@ Example Usage:
 
 In one terminal, create a port-forward through the service:
 
-   $ kubectl port-forward svc/{{ include "ibm-watson-tts-embed-runtime.fullname" . }} 1443:443
+   $ kubectl port-forward svc/{{ include "ibm-watson-tts-embed.runtime.fullname" . }} 1443:443
 
 In another terminal, send a /synthesize request to generate speech and write out output.wav:
 

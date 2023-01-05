@@ -1,8 +1,8 @@
 apiVersion: v2
-name: ibm-watson-tts-embed-runtime
+name: ibm-watson-tts-embed
 description: |
   Demonstrates how to configure a deployment of the Watson Text to Speech
-  Library for Embed Runtime server.
+  Library for Embed Product
 
   License
 

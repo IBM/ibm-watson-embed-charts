@@ -1,0 +1,19 @@
+{{- if .Values.customizationEnabled }}
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "ibm-watson-tts-embed.customization.fullname" . }}
+  labels:
+    {{- include "ibm-watson-tts-embed.customization.labels" . | nindent 4 }}
+spec:
+  type: {{ .Values.serviceType }}
+  selector:
+    {{- include "ibm-watson-tts-embed.customization.selectorLabels" . | nindent 4 }}
+  ports:
+    - name: https
+      protocol: TCP
+      port: 443
+      targetPort: 9443
+
+{{- end -}}

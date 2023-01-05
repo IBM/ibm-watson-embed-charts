@@ -1,0 +1,52 @@
+{{/*
+Generate a Certificate Authority Cert
+*/}}
+{{- $rootca := genCA "ibm-watson-tts-embed-ca" 3650 -}}
+
+{{/*
+Client Certificate for mTLS
+*/}}
+{{- $altNames := list -}}
+{{- $clientCert := include "ibm-embed-helpers.genCert" (list $rootca $altNames) | fromJson -}}
+---
+apiVersion: v1
+kind: Secret
+type: kubernetes.io/tls
+metadata:
+  name: {{ include "ibm-watson-tts-embed.fullname" . }}-client-tls
+  labels:
+    {{- include "ibm-embed-helpers.labels" (list . "pki") | nindent 4 }}
+  annotations:
+    "helm.sh/hook": "pre-install"
+    "helm.sh/hook-delete-policy": "before-hook-creation"
+stringData: {{- include "ibm-embed-helpers.certStringdata" (list $rootca $clientCert) -}}
+
+{{/*
+Server Certificate
+*/}}
+{{- $altNames := list -}}
+{{- $ttsRuntimeService := include "ibm-watson-tts-embed.runtime.fullname" . -}}
+{{- $altNames := append $altNames (printf "%s" $ttsRuntimeService) -}}
+{{- $altNames := append $altNames (printf "%s.%s" $ttsRuntimeService .Release.Namespace) -}}
+{{- $altNames := append $altNames (printf "%s.%s.svc" $ttsRuntimeService .Release.Namespace) -}}
+{{- $altNames := append $altNames (printf "%s.%s.svc.cluster.local" $ttsRuntimeService .Release.Namespace) -}}
+
+{{- $ttsCustomizationService := include "ibm-watson-tts-embed.customization.fullname" . -}}
+{{- $altNames := append $altNames (printf "%s" $ttsCustomizationService) -}}
+{{- $altNames := append $altNames (printf "%s.%s" $ttsCustomizationService .Release.Namespace) -}}
+{{- $altNames := append $altNames (printf "%s.%s.svc" $ttsCustomizationService .Release.Namespace) -}}
+{{- $altNames := append $altNames (printf "%s.%s.svc.cluster.local" $ttsCustomizationService .Release.Namespace) -}}
+
+{{- $serverCert := include "ibm-embed-helpers.genCert" (list $rootca $altNames) | fromJson -}}
+---
+apiVersion: v1
+kind: Secret
+type: kubernetes.io/tls
+metadata:
+  name: {{ include "ibm-watson-tts-embed.fullname" . }}-server-tls
+  labels:
+    {{- include "ibm-watson-tts-embed.pki.labels" . | nindent 4 }}
+  annotations:
+    "helm.sh/hook": "pre-install"
+    "helm.sh/hook-delete-policy": "before-hook-creation"
+stringData: {{- include "ibm-embed-helpers.certStringdata" (list $rootca $serverCert) -}}

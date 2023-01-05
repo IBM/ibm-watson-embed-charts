@@ -1,0 +1,56 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "ibm-watson-stt-embed.tests.fullname" . }}
+  labels:
+    {{- include "ibm-watson-stt-embed.tests.labels" . | nindent 4 }}
+  annotations:
+    "helm.sh/hook": test
+    "helm.sh/hook-weight": "-1"
+    "helm.sh/hook-delete-policy": before-hook-creation,hook-succeeded
+data:
+  health_checks.sh: |
+    set -euo pipefail
+
+    exit_code=0
+
+    declare -A svcMap
+    svcMap[stt-runtime]="{{ include "ibm-watson-stt-embed.runtime.fullname" . }}"
+{{- if .Values.customizationEnabled }}
+    svcMap[stt-customization]="{{ include "ibm-watson-stt-embed.customization.fullname" . }}"
+{{- end }}
+
+    for svc in ${!svcMap[@]}; do
+      if [[ "${svc}" == "stt-runtime" ]]; then
+        svcPort=443
+        svcHealthUri="v1/miniHealthCheck"
+        svcExpect="{}"
+      elif [[ "${svc}" == "stt-customization" ]]; then
+        svcPort=443
+        svcHealthUri="speech-to-text/api/health/check/readiness"
+        svcExpect="\"I'm ready\""
+      else
+        svcPort=443
+        svcHealthUri="error-unregistered-service"
+        svcExpect=""
+      fi
+
+      endpoint="https://${svcMap[$svc]}:${svcPort}/${svcHealthUri}"
+      echo "Sending health check to '${endpoint}'', expecting response with '$svcExpect'"
+      response_code=$(curl -isk -o response.txt -w "%{http_code}" "${endpoint}")
+      if [ "${response_code}" != "200" ]; then
+        echo "Health check failed with status code ${response_code}"
+        exit_code=1
+      else
+        response="$(cat response.txt)"
+          if [[ "${response}" == *"${svcExpect}"* ]]; then
+            echo "Health check successful."
+          else
+            echo "Health check failed with wrong body. Got: ${response}."
+            exit_code=1
+          fi
+      fi
+      echo
+    done
+
+    exit $exit_code

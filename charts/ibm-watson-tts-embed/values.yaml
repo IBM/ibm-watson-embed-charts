@@ -12,14 +12,81 @@ containerRegistry: cp.icr.io/cp/ai
 imagePullSecrets:
   - name: ibm-entitlement-key
 
+# General Configuration
+
+customizationEnabled: true
+
 # readOnlyRootFilesystem controls the setting in the container security context
 readOnlyRootFilesystem: true
 
 serviceType: ClusterIP
+# uploadModelConcurrency controls the number of models uploaded per upload job
+# Jobs are run sequentially, so this affects the total duration.
+uploadModelConcurrency: 5
+
+# Service Dependencies
+
+# objectStorage has configuration for an s3 compatible object storage for models storage
+objectStorage:
+  endpoint: ""
+  region: ""
+  bucket: speech-embed
+  accessKey: ""
+  secretKey: ""
+
+# postgres has configuration for a PostgreSQL instance that will store data and
+# metadata for customizations
+postgres:
+  # host is the hostname of server hosting the Postgres instance
+  host: ""
+  # port to connect to on the hostname
+  port: 5432
+  # loginDatabase is the database used to establish the connection before creating the customizations database
+  loginDatabase: "postgres"
+  # user is the existing user that will own the customizations database and be used at runtime
+  user: ""
+  # password is the password for user
+  password: ""
+  # databaseName is the database that will be created/used to hold data about customizations
+  databaseName: "tts-customizations"
+
+# resources sets per-container resource allocations
+resources:
+  runtime:
+    requests:
+      memory: 4Gi
+      cpu: 1
+      ephemeral-storage: 4Gi
+    limits:
+      memory: 4Gi
+      cpu: 4
+      ephemeral-storage: 4Gi
+  haproxy:
+    requests:
+      memory: 1Gi
+      cpu: 0.2
+      ephemeral-storage: 64Mi
+    limits:
+      memory: 1Gi
+      cpu: 1
+      ephemeral-storage: 64Mi
+  customization:
+    requests:
+      memory: 2Gi
+      cpu: 0.5
+      ephemeral-storage: 2Gi
+    limits:
+      memory: 2Gi
+      cpu: 1
+      ephemeral-storage: 2Gi
 
 # images configures which container images are used
-# To pull by tag only, set digest to the empty string
+# To pull by tag, set digest to the empty string
 images:
+  utils:
+    repository: watson-tts-utils
+    digest: sha256:9e235389be085ca7fe466dd24368655a826b53b530a9cf39acf1d8e9d3e716dd
+    tag: 1.1.0
   runtime:
     repository: watson-tts-runtime
     digest: sha256:44c3e80bfbc4c539bb17556e9e764a073c180f16d9562c3d1cf099c9b0eb08c2
@@ -28,34 +95,19 @@ images:
     repository: watson-tts-haproxy
     digest: sha256:6700ea7d48862aa9f01d26f5ae1453d10b08d626a5d741adf7e161c4abfee3b1
     tag: 1.1.0
+  customization:
+    repository: watson-tts-customization
+    digest: sha256:8d6134663d1d4f1fd7799ce591142f1f683ae63cc11d0ea8ff7aaf20a6378e37
+    tag: 1.1.0
   catalog:
     repository: watson-tts-generic-models
     digest: sha256:2ada4d0496e4424e6218999d27fd2065c75fa75a4b1d6302317367c1bd1adbca
     tag: 1.1.0
 
-# resources sets per-container resource allocations
-resources:
-  runtime:
-    requests:
-      cpu: 1
-      memory: 4Gi
-      ephemeral-storage: 4Gi
-    limits:
-      cpu: 4
-      memory: 4Gi
-      ephemeral-storage: 4Gi
-  haproxy:
-    requests:
-      cpu: 0.2
-      memory: 1Gi
-      ephemeral-storage: 64Mi
-    limits:
-      cpu: 1
-      memory: 1Gi
-      ephemeral-storage: 64Mi
-
 # defaultModel will be used if no voice is included in the /synthesize request
 defaultModel: en-US_AllisonV3Voice
+# modelVersion sets the path within model storage where the catalog will be uploaded
+modelVersion: "1.1.0"
 # models has configuration for model container images and model enablement
 # To pull by tag, set digest to the empty string
 models:
