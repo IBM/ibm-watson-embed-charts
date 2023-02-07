@@ -1,0 +1,44 @@
+Thank you for installing {{ .Chart.Name }}.
+
+Your release is named {{ .Release.Name }}.
+
+To learn more about the release, try:
+
+  $ helm status {{ .Release.Name }}
+  $ helm get all {{ .Release.Name }}
+
+Example Usage:
+
+In one terminal, create a port-forward through the service:
+
+   $ kubectl proxy
+
+In another terminal, view the list of voices:
+
+  $ curl --url "http://localhost:8001/api/v1/namespaces/{{ .Release.Namespace }}/services/https:{{ include "ibm-watson-tts-embed.runtime.fullname" . }}:https/proxy/text-to-speech/api/v1/voices"
+
+Send a /synthesize request to generate speech and write out output.wav:
+
+   $ curl --url "http://localhost:8001/api/v1/namespaces/{{ .Release.Namespace }}/services/https:{{ include "ibm-watson-tts-embed.runtime.fullname" . }}:https/proxy/text-to-speech/api/v1/recognize?model={{ .Values.defaultModel }}" \
+      --header "Content-Type: application/json" \
+      --data '{"text":"Hello world"}' \
+      --header "Accept: audio/wav" \
+      --output output.wav
+
+Use an audio player to play the synthesized output.wav file.
+
+To create a custom language model, send a /customizations request with a base language:
+
+  $ curl -X POST --url "http://localhost:8001/api/v1/namespaces/{{ .Release.Namespace }}/services/https:{{ include "ibm-watson-tts-embed.customization.fullname" . }}:https/proxy/text-to-speech/api/v1/customizations" \
+      --header "x-watson-userinfo: bluemix-instance-id=00000000-0000-0000-0000-000000000000" \
+      --header "Content-Type: application/json" \
+      --data '{
+        "name":"MyCustomModel",
+        "language":"en-US",
+        "description": "First example custom language model"
+      }'
+
+View the list of custom language models:
+
+  $ curl --url "http://localhost:8001/api/v1/namespaces/{{ .Release.Namespace }}/services/https:{{ include "ibm-watson-tts-embed.customization.fullname" . }}:https/proxy/text-to-speech/api/v1/customizations" \
+      --header "x-watson-userinfo: bluemix-instance-id=00000000-0000-0000-0000-000000000000"
