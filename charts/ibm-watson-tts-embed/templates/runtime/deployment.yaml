@@ -5,6 +5,9 @@
 {{- /* Construct the list of enabled models */}}
 {{- $enabledModels := (include "ibm-embed-helpers.enabledModelImageConfigs" .) | fromYamlArray }}
 {{- $modelsList := (list) }}
+{{- if .Values.customizationEnabled }}
+  {{- $modelsList = append $modelsList "TuneByExampleModel" }}
+{{- end }}
 {{- range $enabledModels }}
   {{- $modelsList = append $modelsList .catalogName }}
 {{- end }}
