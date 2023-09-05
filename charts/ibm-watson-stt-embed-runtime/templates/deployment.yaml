@@ -60,10 +60,10 @@ spec:
         args:
         - sh
         - -c
-        - cp model/* /models/pool2
+        - cp -r model/* /models/
         volumeMounts:
         - name: chuck-models
-          mountPath: /models/pool2
+          mountPath: /models/
       {{- end }}
 
       - name: prepare-models
@@ -88,7 +88,7 @@ spec:
         - name: chuck-logs
           mountPath: /opt/ibm/chuck.x86_64/logs
         - name: chuck-models
-          mountPath: /models/pool2
+          mountPath: /models/
         - name: tmp
           mountPath: /tmp
 
