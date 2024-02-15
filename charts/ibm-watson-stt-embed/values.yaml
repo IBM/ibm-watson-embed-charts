@@ -152,12 +152,6 @@ models:
     digest: sha256:64e2701f92d5a65336a342a9be5cc8aae3682ed37693bd457ccd82143e6c34a9
     tag: 1.8.0
     enabled: true
-  enUSTelephonyLSM:
-    catalogName: en-US_Telephony_LSM
-    repository: watson-stt-en-us-telephony-lsm
-    digest: sha256:93966f5817fdca59982393dea517cba5b6c343c185bdf59c20bcec671d67abb0
-    tag: 1.8.0
-    enabled: false
   enWWMedicalTelephony:
     catalogName: en-WW_Medical_Telephony
     repository: watson-stt-en-ww-medical-telephony
@@ -234,12 +228,6 @@ models:
     catalogName: ja-JP_Telephony
     repository: watson-stt-ja-jp-telephony
     digest: sha256:221d3035ac85a381e580ce70b2508c3bf5954dce0326286df39092f4b1e7c0b1
-    tag: 1.8.0
-    enabled: false
-  jaJPTelephonyLSM:
-    catalogName: ja-JP_Telephony_LSM
-    repository: watson-stt-ja-jp-telephony-lsm
-    digest: sha256:ee26950ff9712b251347fdf97d4d026016db35a96edd008d863e94e0c0965ae2
     tag: 1.8.0
     enabled: false
   koKRMultimedia:
