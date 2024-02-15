@@ -89,204 +89,210 @@ resources:
 images:
   utils:
     repository: watson-stt-utils
-    digest: sha256:ac5266e19bfc747afdb76b987f0cfb94e45f7c76b67d73f70f791574dbde93f1
-    tag: 1.7.0
+    digest: sha256:1204cca6f7b7942ce39d7fef3236c201ad305e109df91fabdf4a81eb74899b4f
+    tag: 1.8.0
   runtime:
     repository: watson-stt-runtime
-    digest: sha256:b395b004e43d3da4eab0c3c6669811d784d49f4d561f1e5f5f3ea850397ae5ec
-    tag: 1.7.0
+    digest: sha256:4fa117cd400f5c4507e855d10aed6d56996b550e8d2039854c445869e1e8a92b
+    tag: 1.8.0
   haproxy:
     repository: watson-stt-haproxy
-    digest: sha256:bf5f6e5e17936765f9f70051d997badb5011d37281173171038d7cda8c117711
-    tag: 1.7.0
+    digest: sha256:0961fef7e1e09885026791dedcc5f9abf3375f3ccfb31f0393b155dd1ed6e322
+    tag: 1.8.0
   customization:
     repository: watson-stt-customization
-    digest: sha256:e838b012abb79300680109a141da1373133c307a7652e79eca5ca42d0bc3588b
-    tag: 1.7.0
+    digest: sha256:17b302c958898aaa807293b289a6e026c99cb146ac9d2815b29a6df88dc027a9
+    tag: 1.8.0
   catalog:
     repository: watson-stt-generic-models
-    digest: sha256:beebccfdf5f7fdb79d1d95e9c5524ab4fb2d3330ad5a7e1018c9c89432b46c90
-    tag: 1.7.0
+    digest: sha256:cfcbe0aa5c3c97d1b590a27f3917720eae605f28201bdcebb7433f0cce818e3e
+    tag: 1.8.0
 
 
 # defaultModel will be used if no model is included in the /recognize request
 defaultModel: en-US_Multimedia
 # modelVersion sets the path within model storage where the catalog will be uploaded
-modelVersion: "1.7.0"
+modelVersion: "1.8.0"
 # models has configuration for model container images and model enablement
 # To pull by tag, set digest to the empty string
 models:
   arMSTelephony:
     catalogName: ar-MS_Telephony
     repository: watson-stt-ar-ms-telephony
-    digest: sha256:8ad06448714a54832160c5f36d55a5a01c71fc7574b03f927e723aaae0327387
-    tag: 1.7.0
+    digest: sha256:d3e74cd4e24c9b62975e21926e2802466ad3ba421e127085a8b54006a51b287a
+    tag: 1.8.0
     enabled: false
   csCZTelephony:
     catalogName: cs-CZ_Telephony
     repository: watson-stt-cs-cz-telephony
-    digest: sha256:017ca5b2b6fafa4a03cc62b5d374040200e3a676e212dd91d338e8cf5b1d152e
-    tag: 1.7.0
+    digest: sha256:bb546e8ff74466dedd13a778aa09ab86e6a7cc6f460bbbafbee6408f6a265c3a
+    tag: 1.8.0
     enabled: false
   deDEMultimedia:
     catalogName: de-DE_Multimedia
     repository: watson-stt-de-de-multimedia
-    digest: sha256:efc6b40247506d7cf2a80602d77a30c173ef46f7455057e39b141ce90ea390c5
-    tag: 1.7.0
+    digest: sha256:52c56159ee250e4f3ba0baf77f097735a70c0a561e3f7d5e2a58c5e6e4aa6f60
+    tag: 1.8.0
     enabled: false
   deDETelephony:
     catalogName: de-DE_Telephony
     repository: watson-stt-de-de-telephony
-    digest: sha256:9ea7a8dd3f5e58165630dae2ff4d35f8eb0eeb99f6f6a54cf45b3fe64f0abbb7
-    tag: 1.7.0
-    enabled: false
-  enINTelephony:
-    catalogName: en-IN_Telephony
-    repository: watson-stt-en-in-telephony
-    digest: sha256:7d9fd9f01eb6c8253ac242f3930d75f27823f3cbc069a88adbc0848c3aacf974
-    tag: 1.7.0
+    digest: sha256:625890cfa2f1626362433ccb1ab5c3271ad9912550ddf458ce62df08005cda7e
+    tag: 1.8.0
     enabled: false
   enUSMultimedia:
     catalogName: en-US_Multimedia
     repository: watson-stt-en-us-multimedia
-    digest: sha256:e167e17b76b4bd3cb62bbd841822d79e3d3711605b13d79fb87b86a348c59bc6
-    tag: 1.7.0
+    digest: sha256:eeffaee7f5caa65d2ba15102b36a3a13b01ffadc333cc4f2a5799471c9a79276
+    tag: 1.8.0
     enabled: true
   enUSTelephony:
     catalogName: en-US_Telephony
     repository: watson-stt-en-us-telephony
-    digest: sha256:50a862bfe98a6da9c262cac64a28002b964db5e5efba93a9a90e349532dd4205
-    tag: 1.7.0
+    digest: sha256:64e2701f92d5a65336a342a9be5cc8aae3682ed37693bd457ccd82143e6c34a9
+    tag: 1.8.0
     enabled: true
+  enUSTelephonyLSM:
+    catalogName: en-US_Telephony_LSM
+    repository: watson-stt-en-us-telephony-lsm
+    digest: sha256:93966f5817fdca59982393dea517cba5b6c343c185bdf59c20bcec671d67abb0
+    tag: 1.8.0
+    enabled: false
   enWWMedicalTelephony:
     catalogName: en-WW_Medical_Telephony
     repository: watson-stt-en-ww-medical-telephony
-    digest: sha256:69fa5f27f5bbff14e6ec3cf38d898e9bec26d2024c43a7b30ff159435999e8dd
-    tag: 1.7.0
+    digest: sha256:1930f41d1ffe0c6af6dcb159b9876966dbbba78f42a6e28328a1edede94d973d
+    tag: 1.8.0
     enabled: false
   esESMultimedia:
     catalogName: es-ES_Multimedia
     repository: watson-stt-es-es-multimedia
-    digest: sha256:eaa4aedbb4a509b83ed5ecf1396bcc7415f0a30f3b9cb64eed858e636032ce01
-    tag: 1.7.0
+    digest: sha256:85e5d1225005d3b38bed19dba687e1799c126d239255b746e90b90bac88a22bd
+    tag: 1.8.0
     enabled: false
   esESTelephony:
     catalogName: es-ES_Telephony
     repository: watson-stt-es-es-telephony
-    digest: sha256:4464d39201dbe3969304bb7bd67908936db611783f59718989bc426031be97d6
-    tag: 1.7.0
+    digest: sha256:e75ec0d6289ba2d4262641ba9697cfb1590ca649e028fb6526802acfcd626d6c
+    tag: 1.8.0
     enabled: false
   esLATelephony:
     catalogName: es-LA_Telephony
     repository: watson-stt-es-la-telephony
-    digest: sha256:e6afcdd0250816a4f0c14ee40b6860f5216797a9a52c29ddc638bb45be25ba5b
-    tag: 1.7.0
+    digest: sha256:7c85752aae8ac11ba0da222cbd08932190a563beb91a1878ea8bcf6f9b6fc0d1
+    tag: 1.8.0
     enabled: false
   frCAMultimedia:
     catalogName: fr-CA_Multimedia
     repository: watson-stt-fr-ca-multimedia
-    digest: sha256:0625b13b7d01f65af7fd828bf1878838808b8c9faab87b2b0292697e5b7837c8
-    tag: 1.7.0
+    digest: sha256:eebe123dd2035a16d64e4fdd85a85503bc0e597f145637b8a33503254d1dd02b
+    tag: 1.8.0
     enabled: false
   frCATelephony:
     catalogName: fr-CA_Telephony
     repository: watson-stt-fr-ca-telephony
-    digest: sha256:fc55ff429ba0036725c8757a7c000d07ff080d1c6ac5d399cf2b8d7356ac6e53
-    tag: 1.7.0
+    digest: sha256:2ec10cc52f2db006475a69ef85dae82a4dcbf472f87e5e548f911d02ea927a31
+    tag: 1.8.0
     enabled: false
   frFRMultimedia:
     catalogName: fr-FR_Multimedia
     repository: watson-stt-fr-fr-multimedia
-    digest: sha256:d7d384f85b8a6960fe8c53c2c02fbf33b277ca314269bbdb586ef1d8206f958c
-    tag: 1.7.0
+    digest: sha256:b2068bb7b8cab4061e36f0f49a681cad69ab2a452b2b13b5ceefd5e7f5bccd84
+    tag: 1.8.0
     enabled: false
   frFRTelephony:
     catalogName: fr-FR_Telephony
     repository: watson-stt-fr-fr-telephony
-    digest: sha256:dfb53923931c0fe444ded9d270aebb0fca9c4fd03754808f12cb025243fdac14
-    tag: 1.7.0
+    digest: sha256:6cc3aa72f0edf799905dace0d6f773a02b313b147dcea4b04320a301c8ca0159
+    tag: 1.8.0
     enabled: false
   hiINTelephony:
     catalogName: hi-IN_Telephony
     repository: watson-stt-hi-in-telephony
-    digest: sha256:c6ab94a50d9f75bdd3f9136b2d27085abf053876bb68b743916ff44b6b68347b
-    tag: 1.7.0
+    digest: sha256:054ad36b03f42c08de06e17b59612916f43771647400fc45641f48f0f81b76d7
+    tag: 1.8.0
     enabled: false
   itITMultimedia:
     catalogName: it-IT_Multimedia
     repository: watson-stt-it-it-multimedia
-    digest: sha256:58c823924afb682b52e667cf3c9981bd0e0965e0cfdab99e030a5ad2935901c9
-    tag: 1.7.0
+    digest: sha256:48c23fdfd6962df2c10d27b593a2bf028741bcab41f752d473a6ecad8181f7c9
+    tag: 1.8.0
     enabled: false
   itITTelephony:
     catalogName: it-IT_Telephony
     repository: watson-stt-it-it-telephony
-    digest: sha256:366a00a7deef822ddbb114e231bbb0982864e552f3730caf621e1359ad8be3a9
-    tag: 1.7.0
+    digest: sha256:3e0fa1dd74d4e20ecd26de8a1f0de7a42db7e6791b8fd83e7638a6276d765355
+    tag: 1.8.0
     enabled: false
   jaJPMultimedia:
     catalogName: ja-JP_Multimedia
     repository: watson-stt-ja-jp-multimedia
-    digest: sha256:1f4be8c18668542de0b0fe642f27d0a562b8a9e7c8321c6c866b336352bc652a
-    tag: 1.7.0
+    digest: sha256:76fd56743bf57aea322c1d30a3316e5652e2821383f9697a0b7421b119a6a866
+    tag: 1.8.0
     enabled: false
   jaJPTelephony:
     catalogName: ja-JP_Telephony
     repository: watson-stt-ja-jp-telephony
-    digest: sha256:016468da7ee2b2954018302176aca346fa5aa66476c47ce075375dcca8ac8f62
-    tag: 1.7.0
+    digest: sha256:221d3035ac85a381e580ce70b2508c3bf5954dce0326286df39092f4b1e7c0b1
+    tag: 1.8.0
+    enabled: false
+  jaJPTelephonyLSM:
+    catalogName: ja-JP_Telephony_LSM
+    repository: watson-stt-ja-jp-telephony-lsm
+    digest: sha256:ee26950ff9712b251347fdf97d4d026016db35a96edd008d863e94e0c0965ae2
+    tag: 1.8.0
     enabled: false
   koKRMultimedia:
     catalogName: ko-KR_Multimedia
     repository: watson-stt-ko-kr-multimedia
-    digest: sha256:463bb8dca901a25ee8147b01aad15050a65be08eaddd4859ef38bfec4fe1c4b9
-    tag: 1.7.0
+    digest: sha256:4a13e96a86124859d68f3e76001fadf660c07c6d74ac40fc35638c9f93f0e816
+    tag: 1.8.0
     enabled: false
   koKRTelephony:
     catalogName: ko-KR_Telephony
     repository: watson-stt-ko-kr-telephony
-    digest: sha256:085cf455d3a29bdc1349899639c266738f0b648f2408878bc170a80400e3ef83
-    tag: 1.7.0
+    digest: sha256:f9cfdefe11bc6e83a75664fcb80f797d92a26593a37352eb830d97d0f57cbfbb
+    tag: 1.8.0
     enabled: false
   nlBETelephony:
     catalogName: nl-BE_Telephony
     repository: watson-stt-nl-be-telephony
-    digest: sha256:5948f1bed60411bb44330c7d7011442b4bc604917c7b565a542ddcaf7b751719
-    tag: 1.7.0
+    digest: sha256:9b5d0a69627c8b70828fce645c40c91e577dafea5a4b4faf03da2e8e05dff75b
+    tag: 1.8.0
     enabled: false
   nlNLMultimedia:
     catalogName: nl-NL_Multimedia
     repository: watson-stt-nl-nl-multimedia
-    digest: sha256:b650bf789b165c22cdd7aaa09d608f252b7a720c06e8ee9f49e1bae088523dae
-    tag: 1.7.0
+    digest: sha256:3cbcbef20d0bc406ebe713ac036968ab84a035bfa3282fe318bf5659a06bc3a5
+    tag: 1.8.0
     enabled: false
   nlNLTelephony:
     catalogName: nl-NL_Telephony
     repository: watson-stt-nl-nl-telephony
-    digest: sha256:238c48e55702905b30829b618abff63c72f6560a996b5525a93219e28df92bfb
-    tag: 1.7.0
+    digest: sha256:e52efe955ef874fe1605108677ca682b23cb5d36dfbf26c9c2f3b2d54874e444
+    tag: 1.8.0
     enabled: false
   ptBRMultimedia:
     catalogName: pt-BR_Multimedia
     repository: watson-stt-pt-br-multimedia
-    digest: sha256:bfe6ec3085963cd48513b6fba842644afb5afa5d0c9f3fa1e47e9fd27ab3bdfd
-    tag: 1.7.0
+    digest: sha256:732e5186973fba92d07d62894e237d19ed97af1204d8232e69641dde70c93bb8
+    tag: 1.8.0
     enabled: false
   ptBRTelephony:
     catalogName: pt-BR_Telephony
     repository: watson-stt-pt-br-telephony
-    digest: sha256:0f3ff5b27176f874f8ad2fefb8a9b50755c2bdaba43bc6789db1125ab3bfbb77
-    tag: 1.7.0
+    digest: sha256:e701b7381ec2e6fa18d6e87b0a6d49adebe84487112f442c02419e5aa9facc53
+    tag: 1.8.0
     enabled: false
   svSETelephony:
     catalogName: sv-SE_Telephony
     repository: watson-stt-sv-se-telephony
-    digest: sha256:45c83cdaddd087e383a9b93c7a76e9e55e80aa91818ebc6414ed571610b26124
-    tag: 1.7.0
+    digest: sha256:38df6d4eddb0903cc895bddc9390c719ebd7f7bb20eb1dd7ad94c1988d0ffe10
+    tag: 1.8.0
     enabled: false
   zhCNTelephony:
     catalogName: zh-CN_Telephony
     repository: watson-stt-zh-cn-telephony
-    digest: sha256:1897cf5d71040b7ba33ab19a9dcae3ac5b50c8d26ce7c1cd1c9b4b8fa0f6e702
-    tag: 1.7.0
+    digest: sha256:833578b249bc54a155c2c1df7a215c91da54e78629b7e3585c690be29aff824a
+    tag: 1.8.0
     enabled: false
