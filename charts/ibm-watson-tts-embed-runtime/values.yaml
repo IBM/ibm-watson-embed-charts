@@ -22,16 +22,16 @@ serviceType: ClusterIP
 images:
   runtime:
     repository: watson-tts-runtime
-    digest: sha256:512ab2293e23566e8466606ebef758068ee0b68ad1a7395b4bb5bccb77912b28
-    tag: 1.9.0
+    digest: sha256:c25748bd79515ddfebf3388b0d18a2cdcb8cbca8feca2f667ed63f24ed115123
+    tag: 1.9.1
   haproxy:
     repository: watson-tts-haproxy
-    digest: sha256:ca9a1f56bef2a6f2088fee33c15985096c5a54f2060bada578b03a1c092e4d68
-    tag: 1.9.0
+    digest: sha256:bc3322129984574a84a3531a9526c25de06aac8aa0d6f1fb12af07c76d96e14c
+    tag: 1.9.1
   catalog:
     repository: watson-tts-generic-models
-    digest: sha256:aa57f6a008c70f4dd0611f692c83c03f50ed2a9c4c461a92eebc202e88796fb6
-    tag: 1.9.0
+    digest: sha256:6761dedf5d9a47e463c418e4931e3dabf6a9bab1d16b253894883f527b34bf3d
+    tag: 1.9.1
 
 # resources sets per-container resource allocations
 resources:
@@ -62,186 +62,186 @@ models:
   deDEBirgitV3Voice:
     catalogName: de-DE_BirgitV3Voice
     repository: watson-tts-de-de-birgitv3voice
-    digest: sha256:da6e214424d33d96f55e53e0dac335dd4bb70351a4c8b3e8966fa0ee6ce4ca98
-    tag: 1.9.0
+    digest: sha256:59825c7121498169e03f2cfb4e21b876f2823772db7c81731fbdc0bd30eb69cb
+    tag: 1.9.1
     enabled: false
   deDEDieterV3Voice:
     catalogName: de-DE_DieterV3Voice
     repository: watson-tts-de-de-dieterv3voice
-    digest: sha256:a2accdb55deed84bf62f5e88c032bff74acf6b36cc6b2bdd83785cde880b340b
-    tag: 1.9.0
+    digest: sha256:0123df79dfe1860d2a75992c94bab27e3d51afa2200ee151e801be815fc18411
+    tag: 1.9.1
     enabled: false
   deDEErikaV3Voice:
     catalogName: de-DE_ErikaV3Voice
     repository: watson-tts-de-de-erikav3voice
-    digest: sha256:05d23f9e38b2df25c96406582804a2a319d66cea65162c8ed4434edf69d97ade
-    tag: 1.9.0
+    digest: sha256:ec561360c4b961fe65a478863728f4e1ad5c121b5f3ce2cf438845015c51a386
+    tag: 1.9.1
     enabled: false
   enAUHeidiExpressive:
     catalogName: en-AU_HeidiExpressive
     repository: watson-tts-en-au-heidiexpressive
-    digest: sha256:237aa51030fed640d4048c9fc272b31cff6ad1d1453bed01298e29ae73079564
-    tag: 1.9.0
+    digest: sha256:680e30dfef1cf4ecc1376c7e9691525a03328708e41a22e848743a7327ec93ce
+    tag: 1.9.1
     enabled: false
   enAUJackExpressive:
     catalogName: en-AU_JackExpressive
     repository: watson-tts-en-au-jackexpressive
-    digest: sha256:79b8ed0a3dcb2d8c992fe837c5af7dac9521edfb16136411c8d79656900efba4
-    tag: 1.9.0
+    digest: sha256:e01726e248aa4335b72a362d65e037dc87c2348c4f554d1656b92ede6355ea99
+    tag: 1.9.1
     enabled: false
   enGBCharlotteV3Voice:
     catalogName: en-GB_CharlotteV3Voice
     repository: watson-tts-en-gb-charlottev3voice
-    digest: sha256:5ed430b50d653ff5ef1229a95f2b095ca722c7261cc8b7dfe9926445701a4f35
-    tag: 1.9.0
+    digest: sha256:450d67df03e545794510c92a218fd7b52f4f41de8491d3382ded45bf0b9129e9
+    tag: 1.9.1
     enabled: false
   enGBJamesV3Voice:
     catalogName: en-GB_JamesV3Voice
     repository: watson-tts-en-gb-jamesv3voice
-    digest: sha256:a8258acfe89d1897db9f3a9b7d685884044278f0f918e011d96c11793ba2cff8
-    tag: 1.9.0
+    digest: sha256:6465aed82043d21d74a921c7b2586b93c3e4de582cd3774fc021a197c8ab9749
+    tag: 1.9.1
     enabled: false
   enGBKateV3Voice:
     catalogName: en-GB_KateV3Voice
     repository: watson-tts-en-gb-katev3voice
-    digest: sha256:f4802f1e210d3a7d5ae0e529a2c8501bec85690fc409d3389d2486f29cfbb0a0
-    tag: 1.9.0
+    digest: sha256:43c3965faed2be4d7d37cb631c13ce21972f4f4d6b14c9a04a3bfa3464b95742
+    tag: 1.9.1
     enabled: false
   enUSAllisonExpressive:
     catalogName: en-US_AllisonExpressive
     repository: watson-tts-en-us-allisonexpressive
-    digest: sha256:c5f7a5c2cd2b96111baa814c30a2b19eaaa630e72e2800b6db83bd45d57342b6
-    tag: 1.9.0
+    digest: sha256:0afc4c05bd56d318f110d03eb0b1b39d9c146017c84480782a451a3fbb72006b
+    tag: 1.9.1
     enabled: false
   enUSAllisonV3Voice:
     catalogName: en-US_AllisonV3Voice
     repository: watson-tts-en-us-allisonv3voice
-    digest: sha256:3e4c7ce55d5ccf8fe20d26a1ace75e5339391dabb312450e657b9054c11ce59f
-    tag: 1.9.0
+    digest: sha256:a30c906833977efbab3261de9950c1da8ecf464077c2137e7d1e17406c5af7f1
+    tag: 1.9.1
     enabled: true
   enUSEmilyV3Voice:
     catalogName: en-US_EmilyV3Voice
     repository: watson-tts-en-us-emilyv3voice
-    digest: sha256:d405c09c92fdc313658558331335ce3a46befbedcf5b56b5a4c678c0fa51aa6e
-    tag: 1.9.0
+    digest: sha256:1dd0f1e5b22f730bcc1bc3382f4a1c80a5f5ba2a8afb0029a1d46656f6eeb438
+    tag: 1.9.1
     enabled: false
   enUSEmmaExpressive:
     catalogName: en-US_EmmaExpressive
     repository: watson-tts-en-us-emmaexpressive
-    digest: sha256:e8d4905c60eefaa37f91abd7ad80fe3d94b5b8e5b77a3a43eac7b69f06693257
-    tag: 1.9.0
+    digest: sha256:c1012e46c4b6b3d12d0ee5425118286e59ca462f24e7472cea8026a462aeaae2
+    tag: 1.9.1
     enabled: false
   enUSHenryV3Voice:
     catalogName: en-US_HenryV3Voice
     repository: watson-tts-en-us-henryv3voice
-    digest: sha256:6c617444362383b7628ae81fc4030e8ec1a537a45af4355f7405138477b9c87e
-    tag: 1.9.0
+    digest: sha256:339076f6e5fd7d62d3e07602918772c4508ed2466bc354a23a09df8650b010be
+    tag: 1.9.1
     enabled: false
   enUSKevinV3Voice:
     catalogName: en-US_KevinV3Voice
     repository: watson-tts-en-us-kevinv3voice
-    digest: sha256:5a50a727ad773d25eacfa18767a9648de3de7b85214c7c481044df1ffb0778ba
-    tag: 1.9.0
+    digest: sha256:79d69ca2a4fb691bea69cd70c0038f36392a163e8b1febc82c1b44b0faf6800e
+    tag: 1.9.1
     enabled: false
   enUSLisaExpressive:
     catalogName: en-US_LisaExpressive
     repository: watson-tts-en-us-lisaexpressive
-    digest: sha256:6b86364154f5146d1e0e9f5668f95d46063e53d84a2998283288b45e8c790a24
-    tag: 1.9.0
+    digest: sha256:07997289578be15125349f6eb09c91f4f67affedf1fd27f5aa8f8be8bdd76f4c
+    tag: 1.9.1
     enabled: false
   enUSLisaV3Voice:
     catalogName: en-US_LisaV3Voice
     repository: watson-tts-en-us-lisav3voice
-    digest: sha256:1d56a0915330895269848f1c018fadcac9bf09cb4cb8baebb1a8c47c15c838b8
-    tag: 1.9.0
+    digest: sha256:a39650058e23a50d0fbff4ea0cf9dd9fa89dc2a4fa9028dda4a8df00b31e5576
+    tag: 1.9.1
     enabled: false
   enUSMichaelExpressive:
     catalogName: en-US_MichaelExpressive
     repository: watson-tts-en-us-michaelexpressive
-    digest: sha256:d04491397bdcf45ecc49f2c9bfbd188076ef14184edbdcf2c360ca7ac208e05c
-    tag: 1.9.0
+    digest: sha256:78dbdc9a9cd15d0ff01ad7d3f2c79ef4121587f7f9aa341a1a2fa5a35a566c14
+    tag: 1.9.1
     enabled: false
   enUSMichaelV3Voice:
     catalogName: en-US_MichaelV3Voice
     repository: watson-tts-en-us-michaelv3voice
-    digest: sha256:f070268c1387d09fb6d537266177a8accd0b8cb80489bf0ed0120c5165f5eb73
-    tag: 1.9.0
+    digest: sha256:9ac89d35c41ce660cd68007f3408f0a3d6e2527063399dad93e95d6dcf91676c
+    tag: 1.9.1
     enabled: true
   enUSOliviaV3Voice:
     catalogName: en-US_OliviaV3Voice
     repository: watson-tts-en-us-oliviav3voice
-    digest: sha256:05ea99f9f7cefc8483a292a1ea8bbf97fc3c6657d8468d09533b8a1a345c2581
-    tag: 1.9.0
+    digest: sha256:96bccf2a0e59e86b6619412020f51e9a8b4b0f53f415498bd4bb47bed229414a
+    tag: 1.9.1
     enabled: false
   esESEnriqueV3Voice:
     catalogName: es-ES_EnriqueV3Voice
     repository: watson-tts-es-es-enriquev3voice
-    digest: sha256:e24f616ee804ae299c3a064dfc9859abbc5dc708190553fd6433d3fdfc477702
-    tag: 1.9.0
+    digest: sha256:46eb1521eb2cf659b8a674198b7c0bd2d60fa6a0e683b6f38ef317d7da963fa8
+    tag: 1.9.1
     enabled: false
   esESLauraV3Voice:
     catalogName: es-ES_LauraV3Voice
     repository: watson-tts-es-es-laurav3voice
-    digest: sha256:dc114c8777243a9545744a49d5b889a29a7d7232a79148f37619eeeeaaed26da
-    tag: 1.9.0
+    digest: sha256:10861e589004b1d2edba99e6dfacb83dc7251af5dadefefae7ed8b4495bd611d
+    tag: 1.9.1
     enabled: false
   esLASofiaV3Voice:
     catalogName: es-LA_SofiaV3Voice
     repository: watson-tts-es-la-sofiav3voice
-    digest: sha256:4aa788e62040e1e0ce0c8b8fffb227f32b9cca7a98d6f6a4e2cdf54ebe02e168
-    tag: 1.9.0
+    digest: sha256:d72bf91ca1aea8ef6378eefb66eb72cb6b6cfd6ab6fb8a7280f52cb3e6e6fc0c
+    tag: 1.9.1
     enabled: false
   esUSSofiaV3Voice:
     catalogName: es-US_SofiaV3Voice
     repository: watson-tts-es-us-sofiav3voice
-    digest: sha256:39f6cc0fb625e6bfcf0fb3a2da17feddb1f189a7a1384bc4ea4b15c2f9af8048
-    tag: 1.9.0
+    digest: sha256:cd338d34463a77ff083f7391abeffb6b0eb22a95042c69b676808e63bdf5a30d
+    tag: 1.9.1
     enabled: false
   frCALouiseV3Voice:
     catalogName: fr-CA_LouiseV3Voice
     repository: watson-tts-fr-ca-louisev3voice
-    digest: sha256:999a8ac49a8702eb299fd49da4b8a2cc3daf4bc5520dc799491ea5c20bf80db4
-    tag: 1.9.0
+    digest: sha256:6c36865d41b24a40f7e4aa08e57875a34ecdb1002d6c16551b1d2d1464e806f5
+    tag: 1.9.1
     enabled: false
   frFRNicolasV3Voice:
     catalogName: fr-FR_NicolasV3Voice
     repository: watson-tts-fr-fr-nicolasv3voice
-    digest: sha256:0df5b058eb6ca22782a657d5c09716a648cec6e316ef1f6802a08c327cb968b7
-    tag: 1.9.0
+    digest: sha256:c5a39732043d3296cc9203cc9cd1cdff6846aa0b948da78f8d0636aedb229b76
+    tag: 1.9.1
     enabled: false
   frFRReneeV3Voice:
     catalogName: fr-FR_ReneeV3Voice
     repository: watson-tts-fr-fr-reneev3voice
-    digest: sha256:ed44572ec9b0da188fc6b80b8fc3757733ab76c60ea5afff20fa8ddd8e4b1762
-    tag: 1.9.0
+    digest: sha256:0f3b5f5b55a8835943f72a40f421901ae54a2e7b6dfbb8ecdc6af1ce87417f33
+    tag: 1.9.1
     enabled: false
   itITFrancescaV3Voice:
     catalogName: it-IT_FrancescaV3Voice
     repository: watson-tts-it-it-francescav3voice
-    digest: sha256:c99d2f65e46e01ab9e9de00bd551376ca7f7daf37f7658c02e7602fbd5e6fbce
-    tag: 1.9.0
+    digest: sha256:36fde461af1d30e656c8c5af6d73f384c7841b28e6581e9a6fc561b0a11c989a
+    tag: 1.9.1
     enabled: false
   jaJPEmiV3Voice:
     catalogName: ja-JP_EmiV3Voice
     repository: watson-tts-ja-jp-emiv3voice
-    digest: sha256:7afedb9883a9e29a44a69e230917a0c608247a8553c8814e459b14c2ca5c25a3
-    tag: 1.9.0
+    digest: sha256:eefd736707c05fc2485e4711f6b41d01d182e9aa7cef8b60f81d523bef9236ac
+    tag: 1.9.1
     enabled: false
   koKRJinV3Voice:
     catalogName: ko-KR_JinV3Voice
     repository: watson-tts-ko-kr-jinv3voice
-    digest: sha256:75eee054407a9a317bb6dd54485c507e30db405440d5e95d4bd2722a810def49
-    tag: 1.9.0
+    digest: sha256:d0057d82b3c3dda89273a8f80dcee7e3f252fbeb6772f47e8c977529117bdda9
+    tag: 1.9.1
     enabled: false
   nlNLMerelV3Voice:
     catalogName: nl-NL_MerelV3Voice
     repository: watson-tts-nl-nl-merelv3voice
-    digest: sha256:2ce41a2cfc9d74255b947920d2368c927f7130c9857308312565236762948938
-    tag: 1.9.0
+    digest: sha256:edc86d00faeebc75d74e1ba48f76d14d1f57ce46a36c9b0fb0bdc3e16ff27089
+    tag: 1.9.1
     enabled: false
   ptBRIsabelaV3Voice:
     catalogName: pt-BR_IsabelaV3Voice
     repository: watson-tts-pt-br-isabelav3voice
-    digest: sha256:221db18b39660bf7548fe7f87e473c80a9252534a1056e69f9d17797c76ed2c0
-    tag: 1.9.0
+    digest: sha256:3095303a2007bff0d91003f6f13b3f412effd19ed631f1fac637b2fb172e8899
+    tag: 1.9.1
     enabled: false
