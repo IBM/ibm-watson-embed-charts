@@ -11,8 +11,8 @@ description: |
 home: https://www.ibm.com/docs/watson-libraries?topic=watson-text-speech-library-embed-home
 
 type: application
-version: "0.8.0"
-appVersion: "1.10.0"
+version: "0.9.0"
+appVersion: "1.11.0"
 
 dependencies:
   - name: ibm-embed-helpers
